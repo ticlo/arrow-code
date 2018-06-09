@@ -1,17 +1,17 @@
-// const JsonEsc = require('jsonesc')
+// const JsonEsc = require('jsonesc').default
 const JsonEsc = require('../dist/index').default;
 
 // custom type
 class MyClass {
-  constructor(value) {
-    this.myValue = value;
+  constructor(str) {
+    this.myStr = str;
   }
 }
 
 let myJson = new JsonEsc();
 myJson.register('My', MyClass,
   // custom encoder
-  (obj) => obj.myValue,
+  (obj) => obj.myStr,
   // custom decoder
   (str) => new MyClass(str)
 );
@@ -23,4 +23,4 @@ let encoded = myJson.stringify(new MyClass("hello"));
 let decoded = myJson.parse(encoded);
 
 console.log(encoded);  // "\u001bMy:hello"
-console.log(decoded.myValue); // hello
+console.log(decoded.myStr); // hello

@@ -35,15 +35,17 @@ describe('esc', () => {
 
   it('Uint8Array', () => {
     let bin = new Uint8Array([91, 82, 112, 207]);
-    let binStr = '"\\u001bBin:6zj=z"';
+    let binStr = '"\\u001bBin:W1Jwzw=="';
     assert.equal(JsonEsc.stringify(bin), binStr, 'encode Uint8Array');
     assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array');
   });
-  it('ArrayBuffer', () => {
-    let bin = new Uint8Array([1, 2, 3, 4]);
-    let buffStr = '"\\u001bBuf:6Fa-A"';
-    assert.equal(JsonEsc.stringify(bin.buffer), buffStr, 'encode ArrayBuffer');
-    assert.deepEqual(new Uint8Array(JsonEsc.parse(buffStr)), bin, 'decode ArrayBuffer');
+
+  it('Uint8Array Base91', () => {
+    let bin = new Uint8Array([91, 82, 112, 207]);
+    let binStr = '"\\u001bB91:6zj=z"';
+    let encoder91 = new JsonEsc().useBase91();
+    assert.equal(encoder91.stringify(bin), binStr, 'encode Uint8Array Base64');
+    assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array Base64');
   });
 
   it('invalid input', () => {
