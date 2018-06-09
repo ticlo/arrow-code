@@ -2,15 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const base91_1 = require("./base91");
 function encodeDate(self) {
-    return '\u001bDate:' + self.getTime();
+    return '\u001bDate:' + self.toISOString();
 }
 exports.encodeDate = encodeDate;
 function decodeDate(str) {
-    let ts = parseInt(str.substr(6));
-    if (ts === ts) {
-        return new Date(ts);
-    }
-    return undefined;
+    return new Date(str.substr(6));
 }
 exports.decodeDate = decodeDate;
 function encodeUint8Array(self) {

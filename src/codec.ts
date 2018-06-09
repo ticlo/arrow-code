@@ -1,14 +1,10 @@
 import Base91 from './base91';
 
 export function encodeDate(self: Date): string {
-  return '\u001bDate:' + self.getTime();
+  return '\u001bDate:' + self.toISOString();
 }
 export function decodeDate(str: string): Date {
-  let ts = parseInt(str.substr(6));
-  if (ts === ts) {
-    return new Date(ts);
-  }
-  return undefined;
+    return new Date(str.substr(6));
 }
 
 export function encodeUint8Array(self: Uint8Array): string {

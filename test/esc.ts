@@ -20,14 +20,14 @@ describe('esc', () => {
 
   it('Date', () => {
     {
-      let date = new Date(1518030420207);
-      let dateStr = '"\\u001bDate:1518030420207"';
+      let date = new Date(1518030438207);
+      let dateStr = '"\\u001bDate:2018-02-07T19:07:18.207Z"';
       assert.equal(JsonEsc.stringify(date), dateStr, 'encode date');
-      assert.equal((JsonEsc.parse(dateStr) as Date).getTime(), 1518030420207, 'decode date');
+      assert.equal((JsonEsc.parse(dateStr) as Date).getTime(), 1518030438207, 'decode date');
     }
     {
       let date = new Date(-1);
-      let dateStr = '"\\u001bDate:-1"';
+      let dateStr = '"\\u001bDate:1969-12-31T23:59:59.999Z"';
       assert.equal(JsonEsc.stringify(date), dateStr, 'encode date before 1970');
       assert.equal((JsonEsc.parse(dateStr) as Date).getTime(), -1, 'decode date before 1970');
     }
