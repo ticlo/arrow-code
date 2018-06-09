@@ -31,7 +31,7 @@ function toBsonStructure(obj) {
 const bsonSample = toBsonStructure(sample);
 
 
-let jsonescEncoded = new JsonEsc().useBase91().stringify(sample);
+let jsonescEncoded = JsonEsc.stringify(sample);
 let msgpackEncoded = MsgPack.encode(sample);
 
 let bson = new Bson([Binary]);
@@ -56,8 +56,6 @@ benchmark("JsonEsc encode", ()=>JsonEsc.stringify(sample));
 benchmark("MsgPack encode", ()=>MsgPack.encode(sample));
 benchmark("BSON encode", ()=>bson.serialize(bsonSample));
 
+benchmark("JsonEsc decode", ()=>JsonEsc.parse(jsonescEncoded));
 benchmark("MsgPack decode", ()=>MsgPack.decode(msgpackEncoded));
 benchmark("BSON decode", ()=>bson.deserialize(bsonEncoded));
-
-
-benchmark("JsonEsc decode", ()=>JsonEsc.parse(jsonescEncoded));

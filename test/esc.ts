@@ -33,18 +33,10 @@ describe('esc', () => {
     }
   });
 
-  it('Uint8Array', () => {
-    let bin = new Uint8Array([91, 82, 112, 207]);
-    let binStr = '"\\u001bBin:W1Jwzw=="';
-    assert.equal(JsonEsc.stringify(bin), binStr, 'encode Uint8Array');
-    assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array');
-  });
-
   it('Uint8Array Base91', () => {
     let bin = new Uint8Array([91, 82, 112, 207]);
-    let binStr = '"\\u001bB91:6zj=z"';
-    let encoder91 = new JsonEsc().useBase91();
-    assert.equal(encoder91.stringify(bin), binStr, 'encode Uint8Array Base64');
+    let binStr = '"\\u001bBin:6zj=z"';
+    assert.equal(JsonEsc.stringify(bin), binStr, 'encode Uint8Array Base64');
     assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array Base64');
   });
 

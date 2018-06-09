@@ -8,8 +8,6 @@ export default class JsonEsc {
   constructor() {
     this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
     this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
-    // register decoder only
-    this.registerRaw('B91', null, null, Codec.decodeUint8ArrayBase91);
   }
 
   registerRaw(key: string, type: { prototype: object },
@@ -29,12 +27,6 @@ export default class JsonEsc {
     let prefixLen = prefix.length;
     this._encodeTable.set(type.prototype, (self: object) => `${prefix}${encoder(self)}`);
     this._decodeTable[key] = (str: string) => decoder(str.substr(prefixLen));
-  }
-  // override the default behavior of encoding Uint8Array
-  // Base91 make the binary data more compact
-  useBase91(): JsonEsc {
-    this.registerRaw('B91', Uint8Array, Codec.encodeUint8ArrayBase91, null);
-    return this;
   }
 
   reviver(key: string, value: any): any {
