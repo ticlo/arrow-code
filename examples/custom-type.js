@@ -11,9 +11,9 @@ class MyClass {
 let myJson = new JsonEsc();
 myJson.register('My', MyClass,
   // custom encoder
-  (obj) => '\u001bMy:' + obj.myValue,
+  (obj) => obj.myValue,
   // custom decoder
-  (str) => new MyClass(str.substr(4)) // 4 == '\u001bMy:'.length
+  (str) => new MyClass(str)
 );
 
 

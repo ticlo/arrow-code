@@ -6,16 +6,24 @@ export default class JsonEsc {
 
 
   constructor() {
-    this.register('Date', Date, Codec.encodeDate, Codec.decodeDate);
-    this.register('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
-    this.register('Buf', ArrayBuffer, Codec.encodeBuffer, Codec.decodeBuffer);
+    this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
+    this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
+    this.registerRaw('Buf', ArrayBuffer, Codec.encodeBuffer, Codec.decodeBuffer);
   }
 
-  register(key: string, type: { prototype: object },
+  registerRaw(key: string, type: { prototype: object },
     encoder: (self: object) => string,
     decoder: (str: string) => object) {
     this._encodeTable.set(type.prototype, encoder);
     this._decodeTable[key] = decoder;
+  }
+  register(key: string, type: { prototype: object },
+    encoder: (self: object) => string,
+    decoder: (str: string) => object) {
+    let prefix = `\u001b${key}:`;
+    let prefixLen = prefix.length;
+    this._encodeTable.set(type.prototype, (self: object) => `${prefix}${encoder(self)}`);
+    this._decodeTable[key] = (str: string) => decoder(str.substr(prefixLen));
   }
 
   reviver(key: string, value: any): any {
