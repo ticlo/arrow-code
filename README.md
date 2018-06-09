@@ -16,13 +16,27 @@ JsonEsc.stringify( [
 [
  "\u001bNaN",
  "\u001b-Inf",
- "\u001bDate:1518030420207",
+ "\u001bDate:2018-02-07T19:07:18.207Z",
  "\u001bBin:6Fa-A"
 ]
 ```
 
+## Advantage
+
+JsonEsc allows more data types to be serialized in JSON, such as binary date (Uint8Array) and Date, while still keep the verbose nature of JSON that makes it much easier to debug and trouble shoot than binary formats like BSON and MsgPack
+
 ## Performance
 
+Json is in general slower than Binary formats like MsgPack or BSON. But modern browser and nodejs are hightly optimized for Json, which makes JsonEsc has similar performance as other formats. 
+
+#### benchmark result
+Benchmark on Chrome67 with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchmark/sample-data.js)
+
+||Encode Time(ms)|Decode Time(ms)|
+|:----:|:----:|:----:|
+|JsonEsc|0.1161|0.1606|
+|MsgPack|0.2465|0.1191|
+|BSON|0.1255|0.1170|
 
 
 ## Custom Types
