@@ -6,15 +6,13 @@ Json Escape use escape character as prefix of string value to store types that n
 #### examples
 
 ```javascript
-[
+JsonEsc.stringify( [
   NaN,
   -Infinity,
   new Date(),
   new Uint8Array([1,2,3,4])
-]
-```
-#### after JsonEsc.stringify() :
-```javascript
+] );
+// returns:
 [
  "\u001bNaN",
  "\u001b-Inf",
