@@ -30,7 +30,7 @@ export default class JsonEsc {
   }
 
   reviver(key: string, value: any): any {
-    if (typeof value === 'string' && value && value.charCodeAt(0) === 0x1B) {
+    if (typeof value === 'string' && value.charCodeAt(0) === 0x1B) {
       if (value.length < 6) {
         switch (value) {
           case '\u001bNaN':
