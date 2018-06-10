@@ -1,5 +1,5 @@
 # Json Escape
-Json Escape use escape character as prefix of string value to store types that normally not allowed in JSON
+Json Escape use escape character in string to store types that normally not allowed in JSON
 
 [asc character 0x1b](https://en.wikipedia.org/wiki/Escape_character#ASCII_escape_character) is used for the escaping
 
@@ -20,30 +20,42 @@ JsonEsc.stringify( [
  "\u001bNaN",
  "\u001b-Inf",
  "\u001bDate:2018-02-07T19:07:18.207Z",
- "\u001bBin:6Fa-A"
+ "\u001bBin:wFg{A"
 ]
 ```
 
 ## Advantage
 
-JsonEsc allows additional data types to be serialized in JSON, such as binary date (Uint8Array) and Date, while still keeps the verbose nature of JSON.<br>
-This makes JsonEsc much easier to debug and trouble shoot than binary formats like BSON and MsgPack
+JsonEsc allows more data types to be serialized in JSON, such as binary date (Uint8Array) and Date while still keep the verbose nature of JSON. This makes JsonEsc much easier to debug and trouble shoot than binary formats like BSON and MsgPack
 
-### Performance
+## Performance
 
-Modern browsers and nodejs are hightly optimized for JSON. This allows JsonEsc to be encoded and decoded faster than the other 2 formats in most of the cases.
+In general, JSON is slower than binary formats like MsgPack or BSON. However, modern browsers and nodejs are hightly optimized for JSON. This allows JsonEsc to be encoded and decoded at similar speed as the other 2 formats.
 
 #### benchmark result
 Benchmark on Chrome 67 with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchmark/sample-data.js)
 
-Chrome 67, Firefox59, Edge 42 <br>
-[Time are all in ms, smaller is better](https://github.com/ticlo/jsonesc/blob/master/benchmark/benchmark.js)
+Chrome 67, Firefox59, Edge <br>
+Time are all in ms
 
-||Encode<br>Chrome|Decode<br>Chrome|Encode<br>Firefox|Decode<br>Firefox|Encode<br>Edge|Decode<br>Edge|
+||Encode Chrome|Decode Chrome|Encode Firefox|Decode Firefox|Encode Edge|Decode Edge|
 |:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-|JsonEsc|***0.1161***|0.1606|***0.1394***|***0.1553***|***0.0899***|***0.0753***|
-|MsgPack|0.2465|0.1191|0.8663|0.2313|0.5752|0.2653|
-|BSON|0.1255|***0.1170***|0.3634|0.6124|0.27005|0.37705|
+|JsonEsc|0.1161|0.1606|0.1394|0.1553|
+|MsgPack|0.2465|0.1191|0.8663|0.2313|
+|BSON|0.1255|0.1170|0.3634|0.6124|
+
+JsonEsc encode : 0.1394
+browser.js:2862:3
+MsgPack encode : 0.86635
+browser.js:2862:3
+BSON encode : 0.3634
+browser.js:2862:3
+JsonEsc decode : 0.15535
+browser.js:2862:3
+MsgPack decode : 0.23135
+browser.js:2862:3
+BSON decode : 0.6124
+
 
 ## Custom Types
 
