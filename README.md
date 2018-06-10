@@ -6,6 +6,9 @@ Json Escape use escape character as prefix of string value to store types that n
 #### examples
 
 ```javascript
+// import JsonEsc from 'jsonesc';
+const JsonEsc = require('jsonesc').default;
+
 JsonEsc.stringify( [
   NaN,
   -Infinity,
