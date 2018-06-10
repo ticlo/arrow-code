@@ -1,24 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-// last character is not same as original base91
+// last character is not same as original base93
 // changed from " to - so it fits in json
-const BASE91STR = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&()*+,./:;<=>?@[]^_`{|}~-';
+const BASE93STR = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!#$%&'()*+,-./:;<=>?@[]^_`{|}~ ";
 const ENCODING_TABLE = (() => {
-    let result = new Array(91);
-    for (let i = 0; i < 91; ++i) {
-        result[i] = BASE91STR.charCodeAt(i);
+    let result = new Array(93);
+    for (let i = 0; i < 93; ++i) {
+        result[i] = BASE93STR.charCodeAt(i);
     }
     return result;
 })();
 const DECODING_TABLE = (() => {
     let result = new Array(128);
-    result.fill(91);
-    for (let i = 0; i < 91; ++i) {
-        result[BASE91STR.charCodeAt(i)] = i;
+    result.fill(93);
+    for (let i = 0; i < 93; ++i) {
+        result[BASE93STR.charCodeAt(i)] = i;
     }
     return result;
 })();
-class Base91 {
+class Base93 {
     static encode(data, prefix) {
         let len = data.length;
         let output;
@@ -37,7 +37,7 @@ class Base91 {
             en += 8;
             if (en > 13) {
                 ev = ebq & 0x1FFF;
-                if (ev > 88) {
+                if (ev > 456) {
                     ebq >>= 13;
                     en -= 13;
                 }
@@ -46,14 +46,14 @@ class Base91 {
                     ebq >>= 14;
                     en -= 14;
                 }
-                output[current++] = ENCODING_TABLE[ev % 91];
-                output[current++] = ENCODING_TABLE[(ev / 91) | 0];
+                output[current++] = ENCODING_TABLE[ev % 93];
+                output[current++] = ENCODING_TABLE[(ev / 93) | 0];
             }
         }
         if (en > 0) {
-            output[current++] = ENCODING_TABLE[ebq % 91];
+            output[current++] = ENCODING_TABLE[ebq % 93];
             if (en > 7 || ebq > 90) {
-                output[current++] = ENCODING_TABLE[(ebq / 91) | 0];
+                output[current++] = ENCODING_TABLE[(ebq / 93) | 0];
             }
         }
         output.length = current;
@@ -71,15 +71,15 @@ class Base91 {
             if (code > 126)
                 continue;
             let v = DECODING_TABLE[code];
-            if (v === 91)
+            if (v === 93)
                 continue;
             if (dv === -1) {
                 dv = v;
             }
             else {
-                dv += v * 91;
+                dv += v * 93;
                 dbq |= dv << dn;
-                dn += ((dv & 8191) > 88 ? 13 : 14);
+                dn += ((dv & 0x1FFF) > 456 ? 13 : 14);
                 do {
                     output[current++] = dbq & 0xFF;
                     dbq >>= 8;
@@ -95,5 +95,5 @@ class Base91 {
         return output;
     }
 }
-exports.default = Base91;
-//# sourceMappingURL=base91.js.map
+exports.default = Base93;
+//# sourceMappingURL=base93.js.map
