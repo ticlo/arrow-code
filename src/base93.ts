@@ -53,7 +53,7 @@ export default class Base93 {
     }
     if (en > 0) {
       output[current++] = ENCODING_TABLE[ebq % 93];
-      if (en > 7 || ebq > 90) {
+      if (en > 7 || ebq > 92) {
         output[current++] = ENCODING_TABLE[(ebq / 93) | 0];
       }
     }
