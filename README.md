@@ -68,3 +68,23 @@ myJson.register('My', MyClass,
 myJson.stringify(new MyClass("hello"));
 // "\u001bMy:hello"
 ```
+
+## Base93 encoding
+
+JsonEsc use [Base93](https://github.com/ticlo/jsonesc/tree/master/base93) to encode binary data, it's more compact than Base64.
+
+But if you still prefer Base64, just use these lines to register Uint8Array with a base64 encoder/decoder
+
+```javascript
+const JsonEsc = require('jsonesc').default;
+const Base64 = require("base64-js");
+
+let myJson = new JsonEsc();
+myJson.register('B64', Uint8Array,
+  (uint8arr) => Base64.fromByteArray(uint8arr),
+  (str) => new Uint8Array(Base64.toByteArray(str.substr(5)))
+);
+
+myJson.stringify({ binary:new Uint8Array([1,2,3,4])});
+// {"binary":"\u001bB64:AQIDBA=="}
+```
