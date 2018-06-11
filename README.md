@@ -34,12 +34,11 @@ This makes JsonEsc much easier to debug and trouble shoot than binary formats li
 Modern browsers and nodejs are hightly optimized for JSON. This allows JsonEsc to be encoded and decoded faster than the other 2 formats in most of the cases.
 
 #### benchmark result
-Benchmark on Chrome 67 with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchmark/sample-data.js)
+Benchmark with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchmark/sample-data.js) on Chrome 67, Firefox59, Edge 42 
 
-Chrome 67, Firefox59, Edge 42 <br>
 [Time are all in ms, smaller is better](https://github.com/ticlo/jsonesc/blob/master/benchmark/benchmark.js)
 
-||Encode<br>Chrome|Decode<br>Chrome|Encode<br>Firefox|Decode<br>Firefox|Encode<br>Edge|Decode<br>Edge|
+||Chrome<br>Encode|Chrome<br>Decode|Firefox<br>Encode|Firefox<br>Decode|Edge<br>Encode|Edge<br>Decode|
 |:----:|:----:|:----:|:----:|:----:|:----:|:----:|
 |JsonEsc|***0.1161***|0.1606|***0.1394***|***0.1553***|***0.0899***|***0.0753***|
 |MsgPack|0.2465|0.1191|0.8663|0.2313|0.5752|0.2653|
