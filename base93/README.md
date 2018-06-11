@@ -8,8 +8,8 @@ It is based on Joachim Henke's [Base91](http://base91.sourceforge.net/) with [sm
 
 ||Characters|JSON Encoded Size / Binary Size|
 |:---:|:---:|:---:|
-|Base93|*** \ " *** are not used|1.22551|
-|Base91|*** \ - ' space *** are not used|1.23897*|
+|Base93| \ " are not used|1.22551|
+|Base91| \ - ' space are not used|1.23897*|
 |Base64|A-Z a-Z 0-9 + /|1.33333|
 
 \* Base91's original encoding ratio is 1.22974, but in JSON it's a little bit worse since " will be encoded to \".
