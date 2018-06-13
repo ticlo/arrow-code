@@ -60,13 +60,13 @@ class Base93 {
         return String.fromCharCode.apply(null, output);
     }
     static decode(str, offset = 0, length = -1) {
-        let len = offset + length;
-        if (length < 0 || len > str.length) {
-            len = str.length;
+        let end = offset + length;
+        if (length < 0 || end > str.length) {
+            end = str.length;
         }
-        let output = new Array(Math.ceil((len - offset) * 7 / 8));
+        let output = new Array(Math.ceil((end - offset) * 7 / 8));
         let dbq = 0, dn = 0, dv = -1, current = 0;
-        for (let i = offset; i < len; ++i) {
+        for (let i = offset; i < end; ++i) {
             let code = str.charCodeAt(i);
             if (code > 126)
                 continue;
