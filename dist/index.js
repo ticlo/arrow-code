@@ -79,8 +79,10 @@ class JsonEsc {
     }
     stringifySorted(input, space) {
         let spacesCached = 0;
+        let colon = ':';
         let getSpacer = (level) => '';
         if (space >= 0) {
+            colon = ': ';
             let spaces = ['\n'];
             getSpacer = (level) => {
                 if (level < spacesCached) {
@@ -113,7 +115,7 @@ class JsonEsc {
                                 for (let key of keys) {
                                     let val = value[key];
                                     if (val !== undefined) {
-                                        items.push(`${JSON.stringify(key)}: ${encodeValue(val, level + 1)}`);
+                                        items.push(`${JSON.stringify(key)}${colon}${encodeValue(val, level + 1)}`);
                                     }
                                 }
                                 if (items.length === 0) {
@@ -143,7 +145,7 @@ class JsonEsc {
                             default: {
                                 let encoder = this._encodeTable.get(value.constructor);
                                 if (encoder) {
-                                    return encoder(value);
+                                    return JSON.stringify(encoder(value));
                                 }
                             }
                         }

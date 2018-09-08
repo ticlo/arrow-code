@@ -1,11 +1,12 @@
 import JsonEsc from '../dist/index';
 import { assert } from 'chai';
 
+const nanStr = '"\\u001bNaN"';
+const infStr = '"\\u001bInf"';
+const ninfStr = '"\\u001b-Inf"';
+
 describe('esc', () => {
   it('numbers', () => {
-    let nanStr = '"\\u001bNaN"';
-    let infStr = '"\\u001bInf"';
-    let ninfStr = '"\\u001b-Inf"';
 
     assert.isNaN(JsonEsc.parse(nanStr), 'decode NaN');
     assert.equal(JsonEsc.parse(infStr), Infinity, 'decode Infinity');
@@ -44,4 +45,22 @@ describe('esc', () => {
     assert.equal(JsonEsc.parse('"\\u001b"'), undefined, 'invalid escape');
   });
 
+});
+
+describe('sorted', () => {
+  it('basic', () => {
+    assert.equal(JsonEsc.stringify(NaN, undefined, true), nanStr, 'encode NaN');
+    assert.equal(JsonEsc.stringify(1, undefined, true), '1', 'encode 1');
+    assert.equal(JsonEsc.stringify("", undefined, true), '""', 'encode string');
+    assert.equal(JsonEsc.stringify({}, undefined, true), '{}', 'blank Object');
+    assert.equal(JsonEsc.stringify([], undefined, true), '[]', 'blank array');
+
+    assert.equal(JsonEsc.stringify({ c: 1, a: 2, b: 3 }, undefined, true), '{"a":2,"b":3,"c":1}');
+    assert.equal(JsonEsc.stringify({ c: 1, a: 2, b: 3 }, 1, true), `{
+"a": 2,
+"b": 3,
+"c": 1
+}`);
+
+  });
 });
