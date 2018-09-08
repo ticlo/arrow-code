@@ -77,10 +77,93 @@ class JsonEsc {
     stringify(input, space) {
         return JSON.stringify(input, (key, value) => this.replacer(key, value), space);
     }
+    stringifySorted(input, space) {
+        let spacesCached = 0;
+        let getSpacer = (level) => '';
+        if (space >= 0) {
+            let spaces = ['\n'];
+            getSpacer = (level) => {
+                if (level < spacesCached) {
+                    return spaces[level];
+                }
+                return spaces[level] = '\n'.padEnd((level - 1) * space + 1);
+            };
+        }
+        let encodeValue = (value, level) => {
+            switch (typeof value) {
+                case 'number': {
+                    if (value !== value) {
+                        return '"\\u001bNaN"';
+                    }
+                    if (value === Infinity) {
+                        return '"\\u001bInf"';
+                    }
+                    if (value === -Infinity) {
+                        return '"\\u001b-Inf"';
+                    }
+                    return value;
+                }
+                case 'object': {
+                    if (value) {
+                        switch (value.constructor) {
+                            case Object: {
+                                let keys = Object.keys(value);
+                                keys.sort();
+                                let items = [];
+                                for (let key of keys) {
+                                    let val = value[key];
+                                    if (val !== undefined) {
+                                        items.push(`${JSON.stringify(key)}: ${encodeValue(val, level + 1)}`);
+                                    }
+                                }
+                                if (items.length === 0) {
+                                    return '{}';
+                                }
+                                else {
+                                    return `{${getSpacer(level + 1)}${items.join(`,${getSpacer(level + 1)}`)}${getSpacer(level)}}`;
+                                }
+                            }
+                            case Array: {
+                                let items = [];
+                                for (let val of value) {
+                                    if (val !== undefined) {
+                                        items.push(`${encodeValue(val, level + 1)}`);
+                                    }
+                                    else {
+                                        items.push('null');
+                                    }
+                                }
+                                if (items.length === 0) {
+                                    return '[]';
+                                }
+                                else {
+                                    return `[${getSpacer(level + 1)}${items.join(`,${getSpacer(level + 1)}`)}${getSpacer(level)}]`;
+                                }
+                            }
+                            default: {
+                                let encoder = this._encodeTable.get(value.constructor);
+                                if (encoder) {
+                                    return encoder(value);
+                                }
+                            }
+                        }
+                    }
+                    return 'null';
+                }
+                default: {
+                    return JSON.stringify(value);
+                }
+            }
+        };
+        return encodeValue(input, 0);
+    }
     static parse(str) {
         return JsonEsc.defaultEncoder.parse(str);
     }
-    static stringify(input, space) {
+    static stringify(input, space, sorted = false) {
+        if (sorted === true) {
+            return JsonEsc.defaultEncoder.stringifySorted(input, space);
+        }
         let dateToJSON = Date.prototype.toJSON;
         delete Date.prototype.toJSON;
         let result = JsonEsc.defaultEncoder.stringify(input, space);

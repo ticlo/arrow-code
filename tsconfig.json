@@ -4,7 +4,7 @@
     "module": "commonjs",
     "moduleResolution": "node",
     "lib": [
-      "es6"
+      "es2017"
     ],
     "alwaysStrict": true,
     "noImplicitAny": true,

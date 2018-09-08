@@ -53,6 +53,8 @@ function benchmark(str, fun) {
 }
 
 benchmark("JsonEsc encode", ()=>JsonEsc.stringify(sample));
+benchmark("JsonEsc sorted encode", ()=>JsonEsc.stringify(sample, undefined, true));
+benchmark("JsonEsc sorted indent encode", ()=>JsonEsc.stringify(sample, 1, true));
 benchmark("MsgPack encode", ()=>MsgPack.encode(sample));
 benchmark("BSON encode", ()=>bson.serialize(bsonSample));
 

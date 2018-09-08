@@ -84,15 +84,98 @@ export default class JsonEsc {
     return JSON.parse(str, (key: string, value: any) => this.reviver(key, value));
   }
 
-  stringify(input: any, space?: string | number): string {
+  stringify(input: any, space?: number): string {
     return JSON.stringify(input, (key: string, value: any) => this.replacer(key, value), space);
+  }
+
+  stringifySorted(input: any, space?: number): string {
+
+    let spacesCached = 0;
+    let getSpacer = (level: number) => '';
+    if (space >= 0) {
+      let spaces: string[] = ['\n'];
+      getSpacer = (level: number) => {
+        if (level < spacesCached) {
+          return spaces[level];
+        }
+        return spaces[level] = '\n'.padEnd((level - 1) * space + 1);
+      };
+    }
+
+    let encodeValue = (value: any, level: number) => {
+      switch (typeof value) {
+        case 'number': {
+          if (value !== value) {
+            return '"\\u001bNaN"';
+          }
+          if (value === Infinity) {
+            return '"\\u001bInf"';
+          }
+          if (value === -Infinity) {
+            return '"\\u001b-Inf"';
+          }
+          return value;
+        }
+        case 'object': {
+          if (value) {
+            switch (value.constructor) {
+              case Object: {
+                let keys = Object.keys(value);
+                keys.sort();
+                let items: string[] = [];
+                for (let key of keys) {
+                  let val = value[key];
+                  if (val !== undefined) {
+                    items.push(`${JSON.stringify(key)}: ${encodeValue(val, level + 1)}`);
+                  }
+                }
+                if (items.length === 0) {
+                  return '{}';
+                } else {
+                  return `{${getSpacer(level + 1)}${items.join(`,${getSpacer(level + 1)}`)}${getSpacer(level)}}`;
+                }
+              }
+              case Array: {
+                let items: string[] = [];
+                for (let val of value) {
+                  if (val !== undefined) {
+                    items.push(`${encodeValue(val, level + 1)}`);
+                  } else {
+                    items.push('null');
+                  }
+                }
+                if (items.length === 0) {
+                  return '[]';
+                } else {
+                  return `[${getSpacer(level + 1)}${items.join(`,${getSpacer(level + 1)}`)}${getSpacer(level)}]`;
+                }
+              }
+              default: {
+                let encoder = this._encodeTable.get(value.constructor);
+                if (encoder) {
+                  return encoder(value);
+                }
+              }
+            }
+          }
+          return 'null';
+        }
+        default: {
+          return JSON.stringify(value);
+        }
+      }
+    };
+    return encodeValue(input, 0);
   }
 
   private static defaultEncoder: JsonEsc = new JsonEsc();
   static parse(str: string): any {
     return JsonEsc.defaultEncoder.parse(str);
   }
-  static stringify(input: any, space?: string | number): string {
+  static stringify(input: any, space?: number, sorted: boolean = false): string {
+    if (sorted === true) {
+      return JsonEsc.defaultEncoder.stringifySorted(input, space);
+    }
     let dateToJSON = Date.prototype.toJSON;
     delete Date.prototype.toJSON;
     let result = JsonEsc.defaultEncoder.stringify(input, space);
