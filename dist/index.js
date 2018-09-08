@@ -162,8 +162,8 @@ class JsonEsc {
     static parse(str) {
         return JsonEsc.defaultEncoder.parse(str);
     }
-    static stringify(input, space, sorted = false) {
-        if (sorted === true) {
+    static stringify(input, space, sortKeys = false) {
+        if (sortKeys === true) {
             return JsonEsc.defaultEncoder.stringifySorted(input, space);
         }
         let dateToJSON = Date.prototype.toJSON;

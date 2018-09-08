@@ -174,8 +174,8 @@ export default class JsonEsc {
   static parse(str: string): any {
     return JsonEsc.defaultEncoder.parse(str);
   }
-  static stringify(input: any, space?: number, sorted: boolean = false): string {
-    if (sorted === true) {
+  static stringify(input: any, space?: number, sortKeys: boolean = false): string {
+    if (sortKeys === true) {
       return JsonEsc.defaultEncoder.stringifySorted(input, space);
     }
     let dateToJSON = Date.prototype.toJSON;

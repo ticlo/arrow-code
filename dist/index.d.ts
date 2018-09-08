@@ -11,5 +11,5 @@ export default class JsonEsc {
     stringifySorted(input: any, space?: number): string;
     private static defaultEncoder;
     static parse(str: string): any;
-    static stringify(input: any, space?: number, sorted?: boolean): string;
+    static stringify(input: any, space?: number, sortKeys?: boolean): string;
 }

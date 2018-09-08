@@ -14,7 +14,7 @@ JsonEsc.stringify( [
   -Infinity,
   new Date(),
   new Uint8Array([1,2,3,4])
-] );
+], 1);
 // returns:
 [
  "\u001bNaN",
@@ -27,7 +27,7 @@ JsonEsc.stringify( [
 ## Advantage
 
 JsonEsc allows additional data types to be serialized in JSON, such as binary date (Uint8Array) and Date, while still keeps the verbose nature of JSON.<br>
-This makes JsonEsc much easier to debug and trouble shoot than binary formats like BSON and MsgPack
+The output string is still a 100% valid JSON, and compatible with any JSON editing/parsing tool or library. This makes JsonEsc much easier to debug and trouble shoot than binary formats like BSON and MsgPack
 
 ### Performance
 
@@ -43,6 +43,13 @@ Benchmark with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchm
 |JsonEsc|***0.1161***|0.1606|***0.1394***|***0.1553***|***0.0899***|***0.0753***|
 |MsgPack|0.2465|0.1191|0.8663|0.2313|0.5752|0.2653|
 |BSON|0.1255|***0.1170***|0.3634|0.6124|0.27005|0.37705|
+
+## API
+
+```typescript
+JsonEsc.stringify(inpt:any, space?:number, sortKeys?:boolean = false);
+JsonEsc.parse(inpt:string);
+```
 
 ## Custom Types
 
