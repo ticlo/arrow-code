@@ -9,6 +9,7 @@
     "alwaysStrict": true,
     "noImplicitAny": true,
     "sourceMap": true,
+    "declaration": true,
     "outDir": "dist"
   },
   "compileOnSave": true,
