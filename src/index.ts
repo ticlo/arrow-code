@@ -10,22 +10,22 @@ export default class JsonEsc {
     this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
   }
 
-  registerRaw(key: string, type: { prototype: object },
+  registerRaw(key: string, type: object,
     encoder: (self: object) => string,
     decoder: (str: string) => object) {
     if (type && encoder) {
-      this._encodeTable.set(type.prototype, encoder);
+      this._encodeTable.set(type, encoder);
     }
     if (decoder) {
       this._decodeTable[key] = decoder;
     }
   }
-  register(key: string, type: { prototype: object },
+  register(key: string, type: object,
     encoder: (self: object) => string,
     decoder: (str: string) => object) {
     let prefix = `\u001b${key}:`;
     let prefixLen = prefix.length;
-    this._encodeTable.set(type.prototype, (self: object) => `${prefix}${encoder(self)}`);
+    this._encodeTable.set(type, (self: object) => `${prefix}${encoder(self)}`);
     this._decodeTable[key] = (str: string) => decoder(str.substr(prefixLen));
   }
 
@@ -70,7 +70,7 @@ export default class JsonEsc {
       }
       case 'object': {
         if (value) {
-          let encoder = this._encodeTable.get(value.__proto__);
+          let encoder = this._encodeTable.get(value.constructor);
           if (encoder) {
             return encoder(value);
           }

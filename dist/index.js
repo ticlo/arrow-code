@@ -10,7 +10,7 @@ class JsonEsc {
     }
     registerRaw(key, type, encoder, decoder) {
         if (type && encoder) {
-            this._encodeTable.set(type.prototype, encoder);
+            this._encodeTable.set(type, encoder);
         }
         if (decoder) {
             this._decodeTable[key] = decoder;
@@ -19,7 +19,7 @@ class JsonEsc {
     register(key, type, encoder, decoder) {
         let prefix = `\u001b${key}:`;
         let prefixLen = prefix.length;
-        this._encodeTable.set(type.prototype, (self) => `${prefix}${encoder(self)}`);
+        this._encodeTable.set(type, (self) => `${prefix}${encoder(self)}`);
         this._decodeTable[key] = (str) => decoder(str.substr(prefixLen));
     }
     reviver(key, value) {
@@ -62,7 +62,7 @@ class JsonEsc {
             }
             case 'object': {
                 if (value) {
-                    let encoder = this._encodeTable.get(value.__proto__);
+                    let encoder = this._encodeTable.get(value.constructor);
                     if (encoder) {
                         return encoder(value);
                     }
