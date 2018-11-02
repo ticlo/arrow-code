@@ -75,6 +75,10 @@ export default class JsonEsc {
             return encoder(value);
           }
         }
+        break;
+      }
+      case 'undefined': {
+        return '\u001b?';
       }
     }
     return value;

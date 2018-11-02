@@ -4,6 +4,7 @@ import { assert } from 'chai';
 const nanStr = '"\\u001bNaN"';
 const infStr = '"\\u001bInf"';
 const ninfStr = '"\\u001b-Inf"';
+const undefinedStr = '"\\u001b?"';
 
 describe('esc', () => {
   it('numbers', () => {
@@ -41,7 +42,9 @@ describe('esc', () => {
     assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array Base64');
   });
 
-  it('invalid input', () => {
+  it('undefined', () => {
+    assert.equal(JsonEsc.stringify(undefined), undefinedStr, 'encode undefined');
+    assert.equal(JsonEsc.parse('"\\u001b?"'), undefined, 'undefined');
     assert.equal(JsonEsc.parse('"\\u001b"'), undefined, 'invalid escape');
   });
 
