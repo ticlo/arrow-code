@@ -70,7 +70,7 @@ class JsonEsc {
                 break;
             }
             case 'undefined': {
-                return '\u001b?';
+                return '\u001b';
             }
         }
         return value;
