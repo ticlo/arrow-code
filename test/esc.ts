@@ -44,6 +44,8 @@ describe('esc', () => {
 
   it('undefined', () => {
     assert.equal(JsonEsc.stringify(undefined), undefinedStr, 'encode undefined');
+    assert.equal(JsonEsc.stringify({a:undefined}), `{"a":${undefinedStr}}`, 'encode undefined in object');
+    
     assert.equal(JsonEsc.parse('"\\u001b"'), undefined, 'undefined');
     assert.equal(JsonEsc.parse('"\\u001b?"'), undefined, 'invalid escape');
   });
