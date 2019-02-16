@@ -1,4 +1,8 @@
 # Json Escape
+
+<a href='https://travis-ci.org/ticlo/jsonesc'><img src="https://travis-ci.org/ticlo/jsonesc.svg?branch=master" title="travis-ci"></a>
+
+
 Json Escape use escape character in string to store types that normally not allowed in JSON
 
 [asc character 0x1b](https://en.wikipedia.org/wiki/Escape_character#ASCII_escape_character) is used for the escaping
@@ -22,7 +26,7 @@ JsonEsc.stringify( [
  "\u001b-Inf",
  "\u001bDate:2018-02-07T19:07:18.207Z",
  "\u001bBin:wFg{A",
- "\u001b?"
+ "\u001b"
 ]
 ```
 
