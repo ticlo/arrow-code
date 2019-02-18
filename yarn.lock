@@ -11,8 +11,8 @@
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.1.7.tgz#1b8e33b61a8c09cbe1f85133071baa0dbf9fa71a"
 
 "@types/mocha@^5.2.0":
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.1.tgz#465450aaf5cec6f7d35523748c6cc89a5e222dc5"
+  version "5.2.6"
+  resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-5.2.6.tgz#b8622d50557dd155e9f2f634b7d68fd38de5e94b"
 
 "@types/node@^9.6.6":
   version "9.6.21"
