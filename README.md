@@ -1,6 +1,6 @@
 # Json Escape
 
-<a href='https://travis-ci.org/ticlo/jsonesc'><img src="https://travis-ci.org/ticlo/jsonesc.svg?branch=master" title="travis-ci"></a>
+<a href='https://travis-ci.com/ticlo/jsonesc'><img src="https://travis-ci.com/ticlo/jsonesc.svg?branch=master" title="travis-ci"></a>
 
 
 Json Escape use escape character in string to store types that normally not allowed in JSON
