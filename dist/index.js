@@ -5,8 +5,12 @@ class JsonEsc {
     constructor() {
         this._encodeTable = new Map();
         this._decodeTable = {};
-        this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
+        this.useDate = false;
         this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
+    }
+    registerDate() {
+        this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
+        this.useDate = true;
     }
     registerRaw(key, type, encoder, decoder) {
         if (type && encoder) {
@@ -79,6 +83,13 @@ class JsonEsc {
         return JSON.parse(str, (key, value) => this.reviver(key, value));
     }
     stringify(input, space) {
+        if (this.useDate) {
+            let dateToJSON = Date.prototype.toJSON;
+            delete Date.prototype.toJSON;
+            let result = JSON.stringify(input, (key, value) => this.replacer(key, value), space);
+            Date.prototype.toJSON = dateToJSON;
+            return result;
+        }
         return JSON.stringify(input, (key, value) => this.replacer(key, value), space);
     }
     stringifySorted(input, space) {
@@ -107,7 +118,7 @@ class JsonEsc {
                     if (value === -Infinity) {
                         return '"\\u001b-Inf"';
                     }
-                    return value;
+                    return JSON.stringify(value);
                 }
                 case 'object': {
                     if (value) {
@@ -170,13 +181,15 @@ class JsonEsc {
         if (sortKeys === true) {
             return JsonEsc.defaultEncoder.stringifySorted(input, space);
         }
-        let dateToJSON = Date.prototype.toJSON;
-        delete Date.prototype.toJSON;
-        let result = JsonEsc.defaultEncoder.stringify(input, space);
-        Date.prototype.toJSON = dateToJSON;
-        return result;
+        else {
+            return JsonEsc.defaultEncoder.stringify(input, space);
+        }
     }
 }
-JsonEsc.defaultEncoder = new JsonEsc();
+JsonEsc.defaultEncoder = (() => {
+    let defaultEncoder = new JsonEsc();
+    defaultEncoder.registerDate();
+    return defaultEncoder;
+})();
 exports.default = JsonEsc;
 //# sourceMappingURL=index.js.map

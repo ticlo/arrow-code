@@ -2,17 +2,23 @@ import * as Codec from './codec';
 
 export default class JsonEsc {
   private _encodeTable: Map<object, (self: object) => string> = new Map();
-  private _decodeTable: { [key: string]: (str: string) => object } = {};
+  private _decodeTable: {[key: string]: (str: string) => object} = {};
 
 
   constructor() {
-    this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
     this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
   }
 
+  encodeDate = false;
+
+  registerDate() {
+    this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
+    this.encodeDate = true;
+  }
+
   registerRaw(key: string, type: object,
-    encoder: (self: object) => string,
-    decoder: (str: string) => object) {
+              encoder: (self: object) => string,
+              decoder: (str: string) => object) {
     if (type && encoder) {
       this._encodeTable.set(type, encoder);
     }
@@ -20,9 +26,10 @@ export default class JsonEsc {
       this._decodeTable[key] = decoder;
     }
   }
+
   register(key: string, type: object,
-    encoder: (self: object) => string,
-    decoder: (str: string) => object) {
+           encoder: (self: object) => string,
+           decoder: (str: string) => object) {
     let prefix = `\u001b${key}:`;
     let prefixLen = prefix.length;
     this._encodeTable.set(type, (self: object) => `${prefix}${encoder(self)}`);
@@ -89,6 +96,13 @@ export default class JsonEsc {
   }
 
   stringify(input: any, space?: number): string {
+    if (this.encodeDate) {
+      let dateToJSON = Date.prototype.toJSON;
+      delete Date.prototype.toJSON;
+      let result = JSON.stringify(input, (key: string, value: any) => this.replacer(key, value), space);
+      Date.prototype.toJSON = dateToJSON;
+      return result;
+    }
     return JSON.stringify(input, (key: string, value: any) => this.replacer(key, value), space);
   }
 
@@ -120,7 +134,7 @@ export default class JsonEsc {
           if (value === -Infinity) {
             return '"\\u001b-Inf"';
           }
-          return value;
+          return JSON.stringify(value);
         }
         case 'object': {
           if (value) {
@@ -174,19 +188,22 @@ export default class JsonEsc {
     return encodeValue(input, 0);
   }
 
-  private static defaultEncoder: JsonEsc = new JsonEsc();
+  private static defaultEncoder: JsonEsc = (() => {
+    let defaultEncoder = new JsonEsc();
+    defaultEncoder.registerDate();
+    return defaultEncoder;
+  })();
+
   static parse(str: string): any {
     return JsonEsc.defaultEncoder.parse(str);
   }
+
   static stringify(input: any, space?: number, sortKeys: boolean = false): string {
     if (sortKeys === true) {
       return JsonEsc.defaultEncoder.stringifySorted(input, space);
+    } else {
+      return JsonEsc.defaultEncoder.stringify(input, space);
     }
-    let dateToJSON = Date.prototype.toJSON;
-    delete Date.prototype.toJSON;
-    let result = JsonEsc.defaultEncoder.stringify(input, space);
-    Date.prototype.toJSON = dateToJSON;
-    return result;
   }
 }
 
