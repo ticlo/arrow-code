@@ -1,7 +1,7 @@
 import * as Codec from './codec';
 
 export default class JsonEsc {
-  private _encodeTable: Map<object, (self: object) => string> = new Map();
+  private _encodeTable: Map<any, (self: object) => string> = new Map();
   private _decodeTable: {[key: string]: (str: string) => object} = {};
 
 
@@ -9,11 +9,9 @@ export default class JsonEsc {
     this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
   }
 
-  encodeDate = false;
 
   registerDate() {
     this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
-    this.encodeDate = true;
   }
 
   registerRaw(key: string, type: object,
@@ -96,14 +94,21 @@ export default class JsonEsc {
   }
 
   stringify(input: any, space?: number): string {
-    if (this.encodeDate) {
-      let dateToJSON = Date.prototype.toJSON;
-      delete Date.prototype.toJSON;
-      let result = JSON.stringify(input, (key: string, value: any) => this.replacer(key, value), space);
-      Date.prototype.toJSON = dateToJSON;
-      return result;
+    let toJSONCache = new Map<any, Function>();
+    for (let [cls, f] of this._encodeTable) {
+      if (cls.prototype.toJSON) {
+        toJSONCache.set(cls, cls.prototype.toJSON);
+        delete cls.prototype.toJSON;
+      }
     }
-    return JSON.stringify(input, (key: string, value: any) => this.replacer(key, value), space);
+
+    let result = JSON.stringify(input, (key: string, value: any) => this.replacer(key, value), space);
+
+    for (let [cls, f] of toJSONCache) {
+      cls.prototype.toJSON = f;
+    }
+
+    return result;
   }
 
   stringifySorted(input: any, space?: number): string {

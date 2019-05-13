@@ -5,12 +5,10 @@ class JsonEsc {
     constructor() {
         this._encodeTable = new Map();
         this._decodeTable = {};
-        this.useDate = false;
         this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
     }
     registerDate() {
         this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
-        this.useDate = true;
     }
     registerRaw(key, type, encoder, decoder) {
         if (type && encoder) {
@@ -83,14 +81,18 @@ class JsonEsc {
         return JSON.parse(str, (key, value) => this.reviver(key, value));
     }
     stringify(input, space) {
-        if (this.useDate) {
-            let dateToJSON = Date.prototype.toJSON;
-            delete Date.prototype.toJSON;
-            let result = JSON.stringify(input, (key, value) => this.replacer(key, value), space);
-            Date.prototype.toJSON = dateToJSON;
-            return result;
+        let toJSONCache = new Map();
+        for (let [cls, f] of this._encodeTable) {
+            if (cls.prototype.toJSON) {
+                toJSONCache.set(cls, cls.prototype.toJSON);
+                delete cls.prototype.toJSON;
+            }
         }
-        return JSON.stringify(input, (key, value) => this.replacer(key, value), space);
+        let result = JSON.stringify(input, (key, value) => this.replacer(key, value), space);
+        for (let [cls, f] of toJSONCache) {
+            cls.prototype.toJSON = f;
+        }
+        return result;
     }
     stringifySorted(input, space) {
         let spacesCached = 0;

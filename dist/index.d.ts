@@ -2,7 +2,6 @@ export default class JsonEsc {
     private _encodeTable;
     private _decodeTable;
     constructor();
-    useDate: boolean;
     registerDate(): void;
     registerRaw(key: string, type: object, encoder: (self: object) => string, decoder: (str: string) => object): void;
     register(key: string, type: object, encoder: (self: object) => string, decoder: (str: string) => object): void;
