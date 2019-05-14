@@ -1,4 +1,6 @@
 # Json Escape
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fticlo%2Fjsonesc.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fticlo%2Fjsonesc?ref=badge_shield)
+
 
 <a href='https://travis-ci.com/ticlo/jsonesc'><img src="https://travis-ci.com/ticlo/jsonesc.svg?branch=master" title="travis-ci"></a>
 
@@ -100,3 +102,7 @@ myJson.register('B64', Uint8Array,
 myJson.stringify({ binary:new Uint8Array([1,2,3,4])});
 // {"binary":"\u001bB64:AQIDBA=="}
 ```
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fticlo%2Fjsonesc.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fticlo%2Fjsonesc?ref=badge_large)
