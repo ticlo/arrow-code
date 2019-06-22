@@ -23,3 +23,5 @@ node_modules
 build
 /src/**/*.js
 *.js.map
+/temp
+/.cache
