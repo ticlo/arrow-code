@@ -40,15 +40,15 @@ The output string is still a 100% valid JSON, and compatible with any JSON editi
 Modern browsers and nodejs are hightly optimized for JSON. This allows JsonEsc to be encoded and decoded faster than the other 2 formats in most of the cases.
 
 #### benchmark result
-Benchmark with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchmark/sample-data.js) on Chrome 67, Firefox59, Edge 42 
+Benchmark with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchmark/sample-data.js) on Chrome 77, Firefox 69 
 
 [Time are all in ms, smaller is better](https://github.com/ticlo/jsonesc/blob/master/benchmark/benchmark.js)
 
-||Chrome<br>Encode|Chrome<br>Decode|Firefox<br>Encode|Firefox<br>Decode|Edge<br>Encode|Edge<br>Decode|
+||Chrome<br>Encode|Chrome<br>Decode|Firefox<br>Encode|Firefox<br>Decode|
 |:----:|:----:|:----:|:----:|:----:|:----:|:----:|
-|JsonEsc|***0.1161***|0.1606|***0.1394***|***0.1553***|***0.0899***|***0.0753***|
-|MsgPack|0.2465|0.1191|0.8663|0.2313|0.5752|0.2653|
-|BSON|0.1255|***0.1170***|0.3634|0.6124|0.27005|0.37705|
+|JsonEsc|***0.1434***|***0.1742***|***0.1708***|***0.1301***|
+|MsgPack|0.2893|0.1818|0.6689|0.1933|
+|BSON|0.1573|0.1879|0.3945|0.5648|
 
 ## API
 

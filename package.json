@@ -32,6 +32,6 @@
   },
   "scripts": {
     "test": "cross-env NODE_ENV=TEST mocha -r ts-node/register test/**/*.ts",
-    "benchmark": "parcel benchmark/benchmark.html --out-dir temp --open --no-source-maps"
+    "benchmark": "parcel build benchmark/benchmark.html --out-dir temp --no-source-maps"
   }
 }
