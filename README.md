@@ -45,7 +45,7 @@ Benchmark with [sample data](https://github.com/ticlo/jsonesc/blob/master/benchm
 [Time are all in ms, smaller is better](https://github.com/ticlo/jsonesc/blob/master/benchmark/benchmark.js)
 
 ||Chrome<br>Encode|Chrome<br>Decode|Firefox<br>Encode|Firefox<br>Decode|
-|:----:|:----:|:----:|:----:|:----:|:----:|:----:|
+|:----:|:----:|:----:|:----:|:----:|
 |JsonEsc|***0.1434***|***0.1742***|***0.1708***|***0.1301***|
 |MsgPack|0.2893|0.1818|0.6689|0.1933|
 |BSON|0.1573|0.1879|0.3945|0.5648|
