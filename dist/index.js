@@ -188,10 +188,10 @@ class JsonEsc {
         }
     }
 }
+exports.default = JsonEsc;
 JsonEsc.defaultEncoder = (() => {
     let defaultEncoder = new JsonEsc();
     defaultEncoder.registerDate();
     return defaultEncoder;
 })();
-exports.default = JsonEsc;
 //# sourceMappingURL=index.js.map
