@@ -17,16 +17,14 @@ JsonEsc.stringify( [
   NaN,
   -Infinity,
   new Date(),
-  new Uint8Array([1,2,3,4]),
-  undefined
+  new Uint8Array([1,2,3,4])
 ], 1);
 // returns:
 [
  "\u001bNaN",
  "\u001b-Inf",
  "\u001bDate:2018-02-07T19:07:18.207Z",
- "\u001bBin:wFg{A",
- "\u001b"
+ "\u001bBin:wFg{A"
 ]
 ```
 
