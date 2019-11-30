@@ -71,9 +71,9 @@ class JsonEsc {
                 }
                 break;
             }
-            case 'undefined': {
-                return '\u001b';
-            }
+            // case 'undefined': {
+            //   return '\u001b';
+            // }
         }
         return value;
     }
