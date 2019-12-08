@@ -63,10 +63,13 @@ class JsonEsc {
                 break;
             }
             case 'object': {
-                if (value) {
+                if (value && value.constructor !== Object) {
                     let encoder = this._encodeTable.get(value.constructor);
                     if (encoder) {
                         return encoder(value);
+                    }
+                    else if ('toJsonEsc' in value) {
+                        return value.toJsonEsc();
                     }
                 }
                 break;

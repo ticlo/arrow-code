@@ -1,5 +1,5 @@
 import JsonEsc from '../dist/index';
-import { assert } from 'chai';
+import {assert} from 'chai';
 
 const nanStr = '"\\u001bNaN"';
 const infStr = '"\\u001bInf"';
@@ -42,6 +42,15 @@ describe('esc', () => {
     assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array Base64');
   });
 
+  it('toJsonEsc', () => {
+    class A {
+      toJsonEsc() {
+        return '\u001bA';
+      }
+    }
+    assert.equal(JsonEsc.stringify(new A()),  '"\\u001bA"');
+  });
+
   // it('undefined', () => {
   //   assert.equal(JsonEsc.stringify(undefined), undefinedStr, 'encode undefined');
   //   assert.equal(JsonEsc.stringify({a:undefined}), `{"a":${undefinedStr}}`, 'encode undefined in object');
@@ -60,8 +69,8 @@ describe('sorted', () => {
     assert.equal(JsonEsc.stringify({}, undefined, true), '{}', 'blank Object');
     assert.equal(JsonEsc.stringify([], undefined, true), '[]', 'blank array');
 
-    assert.equal(JsonEsc.stringify({ c: 1, a: 2, b: 3 }, undefined, true), '{"a":2,"b":3,"c":1}');
-    assert.equal(JsonEsc.stringify({ c: 1, a: 2, b: 3 }, 1, true), `{
+    assert.equal(JsonEsc.stringify({c: 1, a: 2, b: 3}, undefined, true), '{"a":2,"b":3,"c":1}');
+    assert.equal(JsonEsc.stringify({c: 1, a: 2, b: 3}, 1, true), `{
 "a": 2,
 "b": 3,
 "c": 1
