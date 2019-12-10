@@ -42,13 +42,25 @@ describe('esc', () => {
     assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array Base64');
   });
 
-  it('toJsonEsc', () => {
+  it('object toJsonEsc', () => {
     class A {
       toJsonEsc() {
         return '\u001bA';
       }
     }
-    assert.equal(JsonEsc.stringify(new A()),  '"\\u001bA"');
+
+    assert.equal(JsonEsc.stringify(new A()), '"\\u001bA"');
+  });
+
+  it('function toJsonEsc', () => {
+    function F() {
+    }
+
+    F.toJsonEsc = () => {
+      return '\u001bF';
+    };
+
+    assert.equal(JsonEsc.stringify(F), '"\\u001bF"');
   });
 
   // it('undefined', () => {

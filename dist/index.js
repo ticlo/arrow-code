@@ -74,6 +74,12 @@ class JsonEsc {
                 }
                 break;
             }
+            case "function": {
+                if ('toJsonEsc' in value) {
+                    return value.toJsonEsc();
+                }
+                return undefined;
+            }
             // case 'undefined': {
             //   return '\u001b';
             // }
