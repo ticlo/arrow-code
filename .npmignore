@@ -25,3 +25,6 @@ build
 *.js.map
 /temp
 /.cache
+/test
+/benchmark
+/yarn.lock
