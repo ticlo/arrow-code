@@ -63,13 +63,15 @@ describe('esc', () => {
     assert.equal(JsonEsc.stringify(F), '"\\u001bF"');
   });
 
-  // it('undefined', () => {
-  //   assert.equal(JsonEsc.stringify(undefined), undefinedStr, 'encode undefined');
-  //   assert.equal(JsonEsc.stringify({a:undefined}), `{"a":${undefinedStr}}`, 'encode undefined in object');
-  //
-  //   assert.equal(JsonEsc.parse('"\\u001b"'), undefined, 'undefined');
-  //   assert.equal(JsonEsc.parse('"\\u001b?"'), undefined, 'invalid escape');
-  // });
+  it('undefined', () => {
+    assert.equal(JsonEsc.stringify(undefined), undefinedStr, 'encode undefined');
+    assert.equal(JsonEsc.stringify({a: undefined}), `{"a":${undefinedStr}}`, 'encode undefined in object');
+
+    assert.equal(JsonEsc.parse('"\\u001b"'), undefined, 'undefined');
+    assert.equal(JsonEsc.parse('"\\u001b?"'), undefined, 'invalid escape');
+
+    assert.deepEqual(JsonEsc.parse('["\\u001b",1]'), [undefined, 1]);
+  });
 
 });
 

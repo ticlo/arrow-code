@@ -90,9 +90,9 @@ export default class JsonEsc {
         }
         return undefined;
       }
-      // case 'undefined': {
-      //   return '\u001b';
-      // }
+      case 'undefined': {
+        return '\u001b';
+      }
     }
     return value;
   }
