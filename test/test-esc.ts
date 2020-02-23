@@ -64,12 +64,19 @@ describe('esc', () => {
   });
 
   it('undefined', () => {
-    assert.equal(JsonEsc.stringify(undefined), undefinedStr, 'encode undefined');
-    assert.equal(JsonEsc.stringify({a: undefined}), `{"a":${undefinedStr}}`, 'encode undefined in object');
+    assert.equal(JsonEsc.stringify(undefined), '"\\u001b"', 'encode undefined');
+    assert.equal(JsonEsc.stringify({a: undefined}), `{}`, 'encode undefined in object');
+    assert.equal(JsonEsc.stringify([undefined]), `["\\u001b"]`, 'encode undefined in array');
+
+    let encoder = new JsonEsc();
+
+    assert.equal(encoder.stringifySorted(undefined), '"\\u001b"', 'encode undefined');
+    assert.equal(encoder.stringifySorted({a: undefined}), `{}`, 'encode undefined in object');
+    assert.equal(encoder.stringifySorted([undefined]), `["\\u001b"]`, 'encode undefined in array');
+
 
     assert.equal(JsonEsc.parse('"\\u001b"'), undefined, 'undefined');
     assert.equal(JsonEsc.parse('"\\u001b?"'), undefined, 'invalid escape');
-
     assert.deepEqual(JsonEsc.parse('["\\u001b",1]'), [undefined, 1]);
   });
 

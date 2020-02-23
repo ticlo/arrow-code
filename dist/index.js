@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const Codec = require("./codec");
+const UNDEFINED_ENCODED = '"\\u001b"';
+const UNDEFINED = '\u001b';
 class JsonEsc {
     constructor() {
         this._encodeTable = new Map();
@@ -48,7 +50,7 @@ class JsonEsc {
         }
         return value;
     }
-    replacer(key, value) {
+    replacer(key, value, parent) {
         switch (typeof value) {
             case 'number': {
                 if (value !== value) {
@@ -81,7 +83,9 @@ class JsonEsc {
                 return undefined;
             }
             case 'undefined': {
-                return '\u001b';
+                if (Array.isArray(parent)) {
+                    return UNDEFINED;
+                }
             }
         }
         return value;
@@ -90,6 +94,9 @@ class JsonEsc {
         return JSON.parse(str, (key, value) => this.reviver(key, value));
     }
     stringify(input, space) {
+        if (input === undefined) {
+            return UNDEFINED_ENCODED;
+        }
         let toJSONCache = new Map();
         for (let [cls, f] of this._encodeTable) {
             if (cls.prototype.toJSON) {
@@ -97,13 +104,20 @@ class JsonEsc {
                 delete cls.prototype.toJSON;
             }
         }
-        let result = JSON.stringify(input, (key, value) => this.replacer(key, value), space);
+        const _this = this;
+        function replacer(key, value) {
+            return _this.replacer(key, value, this);
+        }
+        let result = JSON.stringify(input, replacer, space);
         for (let [cls, f] of toJSONCache) {
             cls.prototype.toJSON = f;
         }
         return result;
     }
     stringifySorted(input, space) {
+        if (input === undefined) {
+            return UNDEFINED_ENCODED;
+        }
         let spacesCached = 0;
         let colon = ':';
         let getSpacer = (level) => '';
@@ -154,11 +168,11 @@ class JsonEsc {
                             case Array: {
                                 let items = [];
                                 for (let val of value) {
-                                    if (val !== undefined) {
-                                        items.push(`${encodeValue(val, level + 1)}`);
+                                    if (val === undefined) {
+                                        items.push(UNDEFINED_ENCODED);
                                     }
                                     else {
-                                        items.push('null');
+                                        items.push(`${encodeValue(val, level + 1)}`);
                                     }
                                 }
                                 if (items.length === 0) {

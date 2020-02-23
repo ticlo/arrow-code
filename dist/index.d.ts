@@ -6,7 +6,7 @@ export default class JsonEsc {
     registerRaw(key: string, type: object, encoder: (self: object) => string, decoder: (str: string) => object): void;
     register(key: string, type: object, encoder: (self: object) => string, decoder: (str: string) => object): void;
     reviver(key: string, value: any): any;
-    replacer(key: string, value: any): any;
+    replacer(key: string, value: any, parent: any): any;
     parse(str: string): any;
     stringify(input: any, space?: number): string;
     stringifySorted(input: any, space?: number): string;

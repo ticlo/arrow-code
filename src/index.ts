@@ -1,5 +1,8 @@
 import * as Codec from './codec';
 
+const UNDEFINED_ENCODED = '"\\u001b"';
+const UNDEFINED = '\u001b';
+
 export default class JsonEsc {
   private _encodeTable: Map<any, (self: object) => string> = new Map();
   private _decodeTable: {[key: string]: (str: string) => object} = {};
@@ -59,7 +62,7 @@ export default class JsonEsc {
     return value;
   }
 
-  replacer(key: string, value: any): any {
+  replacer(key: string, value: any, parent: any): any {
     switch (typeof value) {
       case 'number': {
         if (value !== value) {
@@ -91,7 +94,9 @@ export default class JsonEsc {
         return undefined;
       }
       case 'undefined': {
-        return '\u001b';
+        if (Array.isArray(parent)) {
+          return UNDEFINED;
+        }
       }
     }
     return value;
@@ -102,6 +107,9 @@ export default class JsonEsc {
   }
 
   stringify(input: any, space?: number): string {
+    if (input === undefined) {
+      return UNDEFINED_ENCODED;
+    }
     let toJSONCache = new Map<any, Function>();
     for (let [cls, f] of this._encodeTable) {
       if (cls.prototype.toJSON) {
@@ -109,8 +117,13 @@ export default class JsonEsc {
         delete cls.prototype.toJSON;
       }
     }
+    const _this = this;
 
-    let result = JSON.stringify(input, (key: string, value: any) => this.replacer(key, value), space);
+    function replacer(key: string, value: any) {
+      return _this.replacer(key, value, this);
+    }
+
+    let result = JSON.stringify(input, replacer, space);
 
     for (let [cls, f] of toJSONCache) {
       cls.prototype.toJSON = f;
@@ -120,7 +133,9 @@ export default class JsonEsc {
   }
 
   stringifySorted(input: any, space?: number): string {
-
+    if (input === undefined) {
+      return UNDEFINED_ENCODED;
+    }
     let spacesCached = 0;
     let colon = ':';
     let getSpacer = (level: number) => '';
@@ -171,10 +186,10 @@ export default class JsonEsc {
               case Array: {
                 let items: string[] = [];
                 for (let val of value) {
-                  if (val !== undefined) {
-                    items.push(`${encodeValue(val, level + 1)}`);
+                  if (val === undefined) {
+                    items.push(UNDEFINED_ENCODED);
                   } else {
-                    items.push('null');
+                    items.push(`${encodeValue(val, level + 1)}`);
                   }
                 }
                 if (items.length === 0) {
