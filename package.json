@@ -2,6 +2,9 @@
   "name": "jsonesc",
   "version": "0.4.11",
   "description": "Json Escape",
+  "main": "lib/index",
+  "module": "es/index",
+  "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/ticlo/jsonesc.git"
@@ -11,7 +14,6 @@
     "email": "rinick@gmail.com"
   },
   "license": "Apache-2.0",
-  "main": "dist/index.js",
   "devDependencies": {
     "@babel/core": "^7.19.3",
     "@babel/preset-env": "^7.19.4",
@@ -28,6 +30,8 @@
     "typescript": "^4.8.4"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=TEST mocha -r ts-node/register test/**/*.ts"
+    "test": "cross-env NODE_ENV=TEST mocha -r ts-node/register test/**/*.ts",
+    "build-es": "tsc --module es2020 --outDir ./es",
+    "build-lib": "tsc --outDir ./lib"
   }
 }

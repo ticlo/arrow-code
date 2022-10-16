@@ -25,3 +25,5 @@ build
 *.js.map
 /temp
 /.cache
+/es
+/lib

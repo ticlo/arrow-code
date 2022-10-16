@@ -23,7 +23,7 @@ node_modules
 
 /.cache
 build
-/src/**/*.js
+/src
 *.js.map
 
 /temp
@@ -35,3 +35,5 @@ build
 /yarn.lock
 /.travis.yml
 /.babelrc
+/tslint.json
+/tsconfig.json
