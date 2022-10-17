@@ -3,13 +3,25 @@ import * as Codec from './codec';
 const UNDEFINED_ENCODED = '"\\u001b"';
 const UNDEFINED = '\u001b';
 
+interface Options {
+  binaryFormat: 'base93' | 'base64';
+}
+
 export default class JsonEsc {
   private _encodeTable: Map<any, (self: object) => string> = new Map();
-  private _decodeTable: {[key: string]: (str: string) => object} = {};
+  private _decodeTable: { [key: string]: (str: string) => object } = {};
 
 
-  constructor() {
-    this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
+  constructor(options?: Options) {
+    if (options?.binaryFormat === 'base64') {
+      this.registerRaw('B64', Uint8Array, Codec.encodeBase64, Codec.decodeBase64);
+      // only register base93 decoder, not encoder
+      this.registerRaw('Bin', null, null, Codec.decodeUint8Array);
+    } else {
+      this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
+      // only register base64 decoder, not encoder
+      this.registerRaw('B64', null, null, Codec.decodeBase64);
+    }
   }
 
 

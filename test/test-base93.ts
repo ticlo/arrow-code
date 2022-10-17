@@ -1,4 +1,4 @@
-import Base93 from '../dist/base93';
+import Base93 from '../lib/base93';
 import { assert } from 'chai';
 
 describe('base93', () => {

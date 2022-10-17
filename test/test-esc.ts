@@ -1,10 +1,14 @@
-import JsonEsc from '../dist/index';
+import JsonEsc from '../lib/index';
 import {assert} from 'chai';
 
 const nanStr = '"\\u001bNaN"';
 const infStr = '"\\u001bInf"';
 const ninfStr = '"\\u001b-Inf"';
 const undefinedStr = '"\\u001b"';
+
+const bin = new Uint8Array([91, 82, 112, 207]);
+const binStr = "\"\\u001bBin:xy'/z\"";
+const b64str = '"\\u001bB64:W1Jwzw=="';
 
 describe('esc', () => {
   it('numbers', () => {
@@ -36,10 +40,14 @@ describe('esc', () => {
   });
 
   it('Uint8Array Base93', () => {
-    let bin = new Uint8Array([91, 82, 112, 207]);
-    let binStr = "\"\\u001bBin:xy'/z\"";
-    assert.equal(JsonEsc.stringify(bin), binStr, 'encode Uint8Array Base64');
-    assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array Base64');
+    assert.equal(JsonEsc.stringify(bin), binStr, 'encode Uint8Array Base93');
+    assert.deepEqual(JsonEsc.parse(binStr), bin, 'decode Uint8Array Base93');
+  });
+
+  it('Uint8Array Base64', () => {
+    const jsonEsc = new JsonEsc({binaryFormat: 'base64'});
+    assert.equal(jsonEsc.stringify(bin), b64str, 'encode Uint8Array Base64');
+    assert.deepEqual(jsonEsc.parse(b64str), bin, 'decode Uint8Array Base64');
   });
 
   it('object toJsonEsc', () => {
@@ -54,6 +62,7 @@ describe('esc', () => {
 
   it('function toJsonEsc', () => {
     function F() {
+      // empty function
     }
 
     F.toJsonEsc = () => {
