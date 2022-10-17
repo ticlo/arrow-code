@@ -18,4 +18,3 @@ It is based on Joachim Henke's [BasE91](http://base91.sourceforge.net/) with [sm
 
 * [c](https://github.com/ticlo/jsonesc/tree/master/base93/c)
 * [typescript](https://github.com/ticlo/jsonesc/blob/master/src/base93.ts)
-* [javascript](https://github.com/ticlo/jsonesc/blob/master/dist/base93.js)
