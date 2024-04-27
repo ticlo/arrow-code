@@ -1,7 +1,7 @@
 import * as Codec from './codec';
 
-const UNDEFINED_ENCODED = '"\\u001b"';
-const UNDEFINED = '\u001b';
+const UNDEFINED_ENCODED = '"͢"';
+const UNDEFINED = '͢';
 
 interface Options {
   binaryFormat: 'base93' | 'base64';
@@ -43,21 +43,21 @@ export default class JsonEsc {
   register(key: string, type: object,
            encoder: (self: object) => string,
            decoder: (str: string) => object) {
-    let prefix = `\u001b${key}:`;
+    let prefix = `͢${key}:`;
     let prefixLen = prefix.length;
     this._encodeTable.set(type, (self: object) => `${prefix}${encoder(self)}`);
     this._decodeTable[key] = (str: string) => decoder(str.substr(prefixLen));
   }
 
   reviver(key: string, value: any): any {
-    if (typeof value === 'string' && value.charCodeAt(0) === 0x1B) {
+    if (typeof value === 'string' && value.charCodeAt(0) === 0x362) {
       if (value.length < 6) {
         switch (value) {
-          case '\u001bNaN':
+          case '͢NaN':
             return NaN;
-          case '\u001bInf':
+          case '͢Inf':
             return Infinity;
-          case '\u001b-Inf':
+          case '͢-Inf':
             return -Infinity;
         }
       }
@@ -78,13 +78,13 @@ export default class JsonEsc {
     switch (typeof value) {
       case 'number': {
         if (value !== value) {
-          return '\u001bNaN';
+          return '͢NaN';
         }
         if (value === Infinity) {
-          return '\u001bInf';
+          return '͢Inf';
         }
         if (value === -Infinity) {
-          return '\u001b-Inf';
+          return '͢-Inf';
         }
         break;
       }
@@ -166,13 +166,13 @@ export default class JsonEsc {
       switch (typeof value) {
         case 'number': {
           if (value !== value) {
-            return '"\\u001bNaN"';
+            return '"͢NaN"';
           }
           if (value === Infinity) {
-            return '"\\u001bInf"';
+            return '"͢Inf"';
           }
           if (value === -Infinity) {
-            return '"\\u001b-Inf"';
+            return '"͢-Inf"';
           }
           return JSON.stringify(value);
         }

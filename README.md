@@ -5,7 +5,7 @@
 
 Json Escape use escape character in string to store types that normally not allowed in JSON
 
-[asc character 0x1b](https://en.wikipedia.org/wiki/Escape_character#ASCII_escape_character) is used for the escaping
+[unicode character 0x362](https://www.compart.com/en/unicode/U+0362) is used for the escaping
 
 #### examples
 
@@ -21,10 +21,10 @@ JsonEsc.stringify( [
 ], 1);
 // returns:
 [
- "\u001bNaN",
- "\u001b-Inf",
- "\u001bDate:2018-02-07T19:07:18.207Z",
- "\u001bBin:wFg{A"
+ "͢NaN",
+ "͢-Inf",
+ "͢Date:2018-02-07T19:07:18.207Z",
+ "͢Bin:wFg{A"
 ]
 ```
 
@@ -76,7 +76,7 @@ myJson.register('My', MyClass,
 );
 
 myJson.stringify(new MyClass("hello"));
-// "\u001bMy:hello"
+// "͢My:hello"
 ```
 
 ## Base93 encoding
@@ -91,5 +91,5 @@ const JsonEsc = require('jsonesc').default;
 const myJson = new JsonEsc({binaryFormat: 'base64'});
 
 myJson.stringify({binary: new Uint8Array([1,2,3,4])});
-// {"binary":"\u001bB64:AQIDBA=="}
+// {"binary":"͢B64:AQIDBA=="}
 ```

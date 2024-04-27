@@ -1,14 +1,14 @@
 import JsonEsc from '../lib/index';
 import {assert} from 'chai';
 
-const nanStr = '"\\u001bNaN"';
-const infStr = '"\\u001bInf"';
-const ninfStr = '"\\u001b-Inf"';
-const undefinedStr = '"\\u001b"';
+const nanStr = '"͢NaN"';
+const infStr = '"͢Inf"';
+const ninfStr = '"͢-Inf"';
+const undefinedStr = '"͢"';
 
 const bin = new Uint8Array([91, 82, 112, 207]);
-const binStr = "\"\\u001bBin:xy'/z\"";
-const b64str = '"\\u001bB64:W1Jwzw=="';
+const binStr = "\"͢Bin:xy'/z\"";
+const b64str = '"͢B64:W1Jwzw=="';
 
 describe('esc', () => {
   it('numbers', () => {
@@ -27,13 +27,13 @@ describe('esc', () => {
   it('Date', () => {
     {
       let date = new Date(1518030438207);
-      let dateStr = '"\\u001bDate:2018-02-07T19:07:18.207Z"';
+      let dateStr = '"͢Date:2018-02-07T19:07:18.207Z"';
       assert.equal(JsonEsc.stringify(date), dateStr, 'encode date');
       assert.equal((JsonEsc.parse(dateStr) as Date).getTime(), 1518030438207, 'decode date');
     }
     {
       let date = new Date(-1);
-      let dateStr = '"\\u001bDate:1969-12-31T23:59:59.999Z"';
+      let dateStr = '"͢Date:1969-12-31T23:59:59.999Z"';
       assert.equal(JsonEsc.stringify(date), dateStr, 'encode date before 1970');
       assert.equal((JsonEsc.parse(dateStr) as Date).getTime(), -1, 'decode date before 1970');
     }
@@ -53,11 +53,11 @@ describe('esc', () => {
   it('object toJsonEsc', () => {
     class A {
       toJsonEsc() {
-        return '\u001bA';
+        return '͢A';
       }
     }
 
-    assert.equal(JsonEsc.stringify(new A()), '"\\u001bA"');
+    assert.equal(JsonEsc.stringify(new A()), '"͢A"');
   });
 
   it('function toJsonEsc', () => {
@@ -66,27 +66,27 @@ describe('esc', () => {
     }
 
     F.toJsonEsc = () => {
-      return '\u001bF';
+      return '͢F';
     };
 
-    assert.equal(JsonEsc.stringify(F), '"\\u001bF"');
+    assert.equal(JsonEsc.stringify(F), '"͢F"');
   });
 
   it('undefined', () => {
-    assert.equal(JsonEsc.stringify(undefined), '"\\u001b"', 'encode undefined');
+    assert.equal(JsonEsc.stringify(undefined), '"͢"', 'encode undefined');
     assert.equal(JsonEsc.stringify({a: undefined}), `{}`, 'encode undefined in object');
-    assert.equal(JsonEsc.stringify([undefined]), `["\\u001b"]`, 'encode undefined in array');
+    assert.equal(JsonEsc.stringify([undefined]), `["͢"]`, 'encode undefined in array');
 
     let encoder = new JsonEsc();
 
-    assert.equal(encoder.stringifySorted(undefined), '"\\u001b"', 'encode undefined');
+    assert.equal(encoder.stringifySorted(undefined), '"͢"', 'encode undefined');
     assert.equal(encoder.stringifySorted({a: undefined}), `{}`, 'encode undefined in object');
-    assert.equal(encoder.stringifySorted([undefined]), `["\\u001b"]`, 'encode undefined in array');
+    assert.equal(encoder.stringifySorted([undefined]), `["͢"]`, 'encode undefined in array');
 
 
-    assert.equal(JsonEsc.parse('"\\u001b"'), undefined, 'undefined');
-    assert.equal(JsonEsc.parse('"\\u001b?"'), undefined, 'invalid escape');
-    assert.deepEqual(JsonEsc.parse('["\\u001b",1]'), [undefined, 1]);
+    assert.equal(JsonEsc.parse('"͢"'), undefined, 'undefined');
+    assert.equal(JsonEsc.parse('"͢?"'), undefined, 'invalid escape');
+    assert.deepEqual(JsonEsc.parse('["͢",1]'), [undefined, 1]);
   });
 
 });

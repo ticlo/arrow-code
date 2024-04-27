@@ -2,7 +2,7 @@ import Base93 from './base93';
 import * as Base64 from 'base64-js';
 
 export function encodeDate(self: Date): string {
-  return '\u001bDate:' + self.toISOString();
+  return '͢Date:' + self.toISOString();
 }
 
 export function decodeDate(str: string): Date {
@@ -11,7 +11,7 @@ export function decodeDate(str: string): Date {
 
 
 export function encodeUint8Array(self: Uint8Array): string {
-  return Base93.encode(self, '\u001bBin:');
+  return Base93.encode(self, '͢Bin:');
 }
 
 export function decodeUint8Array(str: string): Uint8Array {
@@ -20,7 +20,7 @@ export function decodeUint8Array(str: string): Uint8Array {
 
 
 export function encodeBase64(self: Uint8Array): string {
-  return `\u001bB64:${Base64.fromByteArray(self)}`;
+  return `͢B64:${Base64.fromByteArray(self)}`;
 }
 
 export function decodeBase64(str: string): Uint8Array {

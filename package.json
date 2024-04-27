@@ -1,6 +1,6 @@
 {
   "name": "jsonesc",
-  "version": "0.4.13",
+  "version": "1.0.0",
   "description": "Json Escape",
   "main": "lib/index",
   "module": "es/index",

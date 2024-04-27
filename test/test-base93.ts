@@ -9,7 +9,7 @@ describe('base93', () => {
     assert.equal(Base93.encode(binary), str, 'encode');
     assert.deepEqual(Base93.decode(str), binary, 'decode');
 
-    const prefix = '\u001bBin:';
+    const prefix = '͢Bin:';
     const prefixedStr = prefix + str;
     assert.equal(Base93.encode(binary, prefix), prefixedStr, 'encode with prefix');
     assert.deepEqual(Base93.decode(prefixedStr, prefix.length), binary, 'decode with prefix');

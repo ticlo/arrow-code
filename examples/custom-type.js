@@ -22,5 +22,5 @@ let encoded = myJson.stringify(new MyClass("hello"));
 // test the cutom decoder
 let decoded = myJson.parse(encoded);
 
-console.log(encoded);  // "\u001bMy:hello"
+console.log(encoded);  // "͢My:hello"
 console.log(decoded.myStr); // hello
