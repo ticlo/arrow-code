@@ -59,6 +59,12 @@ export default class JsonEsc {
             return Infinity;
           case '͢-Inf':
             return -Infinity;
+          case '͢true':
+            return true;
+          case '͢false':
+            return false;
+          case '͢null':
+            return null;
         }
       }
       let colonPos = value.indexOf(':');
@@ -226,6 +232,13 @@ export default class JsonEsc {
       }
     };
     return encodeValue(input, 0);
+  }
+
+  encode(input: any): string {
+    return this.reviver(null, input);
+  }
+  decode(str: string): any {
+    return this.replacer(null, str, null);
   }
 
   private static defaultEncoder: JsonEsc = (() => {

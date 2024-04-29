@@ -1,13 +1,13 @@
 {
-  "name": "jsonesc",
-  "version": "1.0.0",
-  "description": "Json Escape",
+  "name": "arrow-code",
+  "version": "0.1.0",
+  "description": "Arrow Code",
   "main": "lib/index",
   "module": "es/index",
   "types": "lib/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ticlo/jsonesc.git"
+    "url": "https://github.com/ticlo/arrow-code.git"
   },
   "author": {
     "name": "Rick Zhou",
