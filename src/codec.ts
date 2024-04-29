@@ -26,3 +26,25 @@ export function encodeBase64(self: Uint8Array): string {
 export function decodeBase64(str: string): Uint8Array {
   return new Uint8Array(Base64.toByteArray(str.substring(5)));
 }
+
+
+export function encodeNumner(self: number): string {
+  return '͢Number:' + self.toString();
+}
+
+export function decodeNumber(str: string): number {
+  return Number.parseFloat(str.substring(8));
+}
+
+export function encodeBigInt(self: BigInt): string {
+  return '͢BigInt:' + self.toString();
+}
+
+export function decodeBigInt(str: string): BigInt {
+  return BigInt(str.substring(8));
+}
+
+export function encodeBoolean(self: boolean): string {
+  return '͢' + self.toString();
+}
+

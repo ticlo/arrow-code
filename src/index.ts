@@ -1,37 +1,57 @@
-import * as Codec from './codec';
+import {
+  decodeBase64,
+  decodeBigInt,
+  decodeDate, decodeNumber,
+  decodeUint8Array,
+  encodeBase64,
+  encodeBigInt, encodeBoolean,
+  encodeDate,
+  encodeNumner,
+  encodeUint8Array
+} from "./codec";
 
 const UNDEFINED_ENCODED = '"͢"';
 const UNDEFINED = '͢';
 
 interface Options {
-  binaryFormat: 'base93' | 'base64';
+  encodeBinary?: boolean | 'base64';
+  encodeDate?: boolean; // default true
+  encodeBigInt?: boolean; // default true
+  encodePrimitive?: boolean; // default false
 }
 
-export default class JsonEsc {
+export default class Arrow {
   private _encodeTable: Map<any, (self: object) => string> = new Map();
   private _decodeTable: { [key: string]: (str: string) => object } = {};
 
+  encodePrimitive = false;
 
   constructor(options?: Options) {
-    if (options?.binaryFormat === 'base64') {
-      this.registerRaw('B64', Uint8Array, Codec.encodeBase64, Codec.decodeBase64);
+    if (options?.encodeBinary === 'base64') {
+      this.registerRaw('B64', Uint8Array, encodeBase64, decodeBase64);
       // only register base93 decoder, not encoder
-      this.registerRaw('Bin', null, null, Codec.decodeUint8Array);
-    } else {
-      this.registerRaw('Bin', Uint8Array, Codec.encodeUint8Array, Codec.decodeUint8Array);
+      this.registerRaw('Bin', null, null, decodeUint8Array);
+    } else if (options?.encodeBinary !== false) {
+      this.registerRaw('Bin', Uint8Array, encodeUint8Array, decodeUint8Array);
       // only register base64 decoder, not encoder
-      this.registerRaw('B64', null, null, Codec.decodeBase64);
+      this.registerRaw('B64', null, null, decodeBase64);
     }
-  }
+    if (options?.encodeDate !== false) {
+      this.registerRaw('Date', Date, encodeDate, decodeDate);
+    }
+    if (options?.encodeBigInt !== false) {
+      this.registerRaw('BigInt', BigInt, encodeBigInt, decodeBigInt);
+    }
 
-
-  registerDate() {
-    this.registerRaw('Date', Date, Codec.encodeDate, Codec.decodeDate);
+    if (options?.encodePrimitive) {
+      this.encodePrimitive = true;
+      this.registerRaw('Number', Number, null, decodeNumber);
+    }
   }
 
   registerRaw(key: string, type: object,
               encoder: (self: object) => string,
-              decoder: (str: string) => object) {
+              decoder: (str: string) => any) {
     if (type && encoder) {
       this._encodeTable.set(type, encoder);
     }
@@ -46,12 +66,12 @@ export default class JsonEsc {
     let prefix = `͢${key}:`;
     let prefixLen = prefix.length;
     this._encodeTable.set(type, (self: object) => `${prefix}${encoder(self)}`);
-    this._decodeTable[key] = (str: string) => decoder(str.substr(prefixLen));
+    this._decodeTable[key] = (str: string) => decoder(str.substring(prefixLen));
   }
 
   reviver(key: string, value: any): any {
     if (typeof value === 'string' && value.charCodeAt(0) === 0x362) {
-      if (value.length < 6) {
+      if (value.length < 7) {
         switch (value) {
           case '͢NaN':
             return NaN;
@@ -99,15 +119,15 @@ export default class JsonEsc {
           let encoder = this._encodeTable.get(value.constructor);
           if (encoder) {
             return encoder(value);
-          } else if ('toJsonEsc' in value) {
-            return value.toJsonEsc();
+          } else if ('toArrow' in value) {
+            return value.toArrow();
           }
         }
         break;
       }
       case "function": {
-        if ('toJsonEsc' in value) {
-          return value.toJsonEsc();
+        if ('toArrow' in value) {
+          return value.toArrow();
         }
         return undefined;
       }
@@ -235,28 +255,59 @@ export default class JsonEsc {
   }
 
   encode(input: any): string {
-    return this.reviver(null, input);
-  }
-  decode(str: string): any {
-    return this.replacer(null, str, null);
-  }
-
-  private static defaultEncoder: JsonEsc = (() => {
-    let defaultEncoder = new JsonEsc();
-    defaultEncoder.registerDate();
-    return defaultEncoder;
-  })();
-
-  static parse(str: string): any {
-    return JsonEsc.defaultEncoder.parse(str);
-  }
-
-  static stringify(input: any, space?: number, sortKeys: boolean = false): string {
-    if (sortKeys === true) {
-      return JsonEsc.defaultEncoder.stringifySorted(input, space);
-    } else {
-      return JsonEsc.defaultEncoder.stringify(input, space);
+    const result = this.replacer(null, input, null);
+    if (this.encodePrimitive) {
+      switch (typeof result) {
+        case "string":
+          return result;
+        case "number":
+          return encodeNumner(input);
+        case "boolean":
+          return encodeBoolean(input);
+        default:
+          if (result === null) {
+            return '͢null';
+          }
+      }
+    } else if (typeof result === 'string') {
+      return result;
     }
+    return null;
+  }
+
+  decode(str: string): any {
+    return this.reviver(null, str);
+  }
+
+  encodeJSON(input: any, space?: number, sortKeys: boolean = false): string {
+    if (sortKeys === true) {
+      return this.stringifySorted(input, space);
+    } else {
+      return this.stringify(input, space);
+    }
+  }
+
+  decodeJSON(str: string): any {
+    this.parse(str);
+  }
+
+
+  private static defaultEncoder: Arrow = (() => new Arrow())();
+
+  static decodeJSON(str: string): any {
+    return Arrow.defaultEncoder.parse(str);
+  }
+
+  static encodeJSON(input: any, space?: number, sortKeys: boolean = false): string {
+    return Arrow.defaultEncoder.encodeJSON(input, space, sortKeys);
+  }
+
+  static encode(input: any): string {
+    return Arrow.defaultEncoder.encode(input);
+  }
+
+  static decode(str: string): any {
+    return Arrow.defaultEncoder.decode(str);
   }
 }
 
