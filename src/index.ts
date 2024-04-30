@@ -13,6 +13,14 @@ import {
 const UNDEFINED_ENCODED = '"͢"';
 const UNDEFINED = '͢';
 
+interface ArrowObject {
+  toArrow(): string;
+}
+
+function hasToArrow(obj: unknown): obj is ArrowObject {
+  return 'toArrow' in (obj as any);
+}
+
 interface Options {
   encodeBinary?: boolean | 'base64';
   encodeDate?: boolean; // default true
@@ -69,7 +77,7 @@ export default class Arrow {
     this._decodeTable[key] = (str: string) => decoder(str.substring(prefixLen));
   }
 
-  reviver(key: string, value: any): any {
+  reviver(key: string, value: unknown): unknown {
     if (typeof value === 'string' && value.charCodeAt(0) === 0x362) {
       if (value.length < 7) {
         switch (value) {
@@ -100,7 +108,7 @@ export default class Arrow {
     return value;
   }
 
-  replacer(key: string, value: any, parent: any): any {
+  replacer(key: string, value: unknown, parent: unknown): unknown {
     switch (typeof value) {
       case 'number': {
         if (value !== value) {
@@ -119,14 +127,14 @@ export default class Arrow {
           let encoder = this._encodeTable.get(value.constructor);
           if (encoder) {
             return encoder(value);
-          } else if ('toArrow' in value) {
+          } else if (hasToArrow(value)) {
             return value.toArrow();
           }
         }
         break;
       }
       case "function": {
-        if ('toArrow' in value) {
+        if (hasToArrow(value)) {
           return value.toArrow();
         }
         return undefined;
@@ -140,11 +148,11 @@ export default class Arrow {
     return value;
   }
 
-  parse(str: string): any {
-    return JSON.parse(str, (key: string, value: any) => this.reviver(key, value));
+  parse(str: string): unknown {
+    return JSON.parse(str, (key: string, value: unknown) => this.reviver(key, value));
   }
 
-  stringify(input: any, space?: number): string {
+  stringify(input: unknown, space?: number): string {
     if (input === undefined) {
       return UNDEFINED_ENCODED;
     }
@@ -157,7 +165,7 @@ export default class Arrow {
     }
     const _this = this;
 
-    function replacer(key: string, value: any) {
+    function replacer(key: string, value: unknown) {
       return _this.replacer(key, value, this);
     }
 
@@ -170,7 +178,7 @@ export default class Arrow {
     return result;
   }
 
-  stringifySorted(input: any, space?: number): string {
+  stringifySorted(input: unknown, space?: number): string {
     if (input === undefined) {
       return UNDEFINED_ENCODED;
     }
@@ -188,7 +196,7 @@ export default class Arrow {
       };
     }
 
-    let encodeValue = (value: any, level: number) => {
+    let encodeValue = (value: unknown, level: number) => {
       switch (typeof value) {
         case 'number': {
           if (value !== value) {
@@ -210,7 +218,7 @@ export default class Arrow {
                 keys.sort();
                 let items: string[] = [];
                 for (let key of keys) {
-                  let val = value[key];
+                  let val = (value as any)[key];
                   if (val !== undefined) {
                     items.push(`${JSON.stringify(key)}${colon}${encodeValue(val, level + 1)}`);
                   }
@@ -223,7 +231,7 @@ export default class Arrow {
               }
               case Array: {
                 let items: string[] = [];
-                for (let val of value) {
+                for (let val of value as unknown[]) {
                   if (val === undefined) {
                     items.push(UNDEFINED_ENCODED);
                   } else {
@@ -254,16 +262,16 @@ export default class Arrow {
     return encodeValue(input, 0);
   }
 
-  encode(input: any): string {
+  encode(input: unknown): string {
     const result = this.replacer(null, input, null);
     if (this.encodePrimitive) {
       switch (typeof result) {
         case "string":
           return result;
         case "number":
-          return encodeNumner(input);
+          return encodeNumner(input as number);
         case "boolean":
-          return encodeBoolean(input);
+          return encodeBoolean(input as boolean);
         default:
           if (result === null) {
             return '͢null';
@@ -275,11 +283,11 @@ export default class Arrow {
     return null;
   }
 
-  decode(str: string): any {
+  decode(str: string): unknown {
     return this.reviver(null, str);
   }
 
-  encodeJSON(input: any, space?: number, sortKeys: boolean = false): string {
+  encodeJSON(input: unknown, space?: number, sortKeys: boolean = false): string {
     if (sortKeys === true) {
       return this.stringifySorted(input, space);
     } else {
@@ -287,26 +295,26 @@ export default class Arrow {
     }
   }
 
-  decodeJSON(str: string): any {
-    this.parse(str);
+  decodeJSON(str: string): unknown {
+    return this.parse(str);
   }
 
 
   private static defaultEncoder: Arrow = (() => new Arrow())();
 
-  static decodeJSON(str: string): any {
+  static decodeJSON(str: string): unknown {
     return Arrow.defaultEncoder.parse(str);
   }
 
-  static encodeJSON(input: any, space?: number, sortKeys: boolean = false): string {
+  static encodeJSON(input: unknown, space?: number, sortKeys: boolean = false): string {
     return Arrow.defaultEncoder.encodeJSON(input, space, sortKeys);
   }
 
-  static encode(input: any): string {
+  static encode(input: unknown): string {
     return Arrow.defaultEncoder.encode(input);
   }
 
-  static decode(str: string): any {
+  static decode(str: string): unknown {
     return Arrow.defaultEncoder.decode(str);
   }
 }
