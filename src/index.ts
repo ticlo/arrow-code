@@ -10,7 +10,7 @@ import {
   encodeUint8Array
 } from "./codec";
 
-const UNDEFINED_ENCODED = '"͢"';
+const UNDEFINED_JSON = '"͢"';
 const UNDEFINED = '͢';
 
 interface ArrowObject {
@@ -154,7 +154,7 @@ export default class Arrow {
 
   stringify(input: unknown, space?: number): string {
     if (input === undefined) {
-      return UNDEFINED_ENCODED;
+      return UNDEFINED_JSON;
     }
     let toJSONCache = new Map<any, Function>();
     for (let [cls, f] of this._encodeTable) {
@@ -180,7 +180,7 @@ export default class Arrow {
 
   stringifySorted(input: unknown, space?: number): string {
     if (input === undefined) {
-      return UNDEFINED_ENCODED;
+      return UNDEFINED_JSON;
     }
     let spacesCached = 0;
     let colon = ':';
@@ -233,7 +233,7 @@ export default class Arrow {
                 let items: string[] = [];
                 for (let val of value as unknown[]) {
                   if (val === undefined) {
-                    items.push(UNDEFINED_ENCODED);
+                    items.push(UNDEFINED_JSON);
                   } else {
                     items.push(`${encodeValue(val, level + 1)}`);
                   }
@@ -272,6 +272,8 @@ export default class Arrow {
           return encodeNumner(input as number);
         case "boolean":
           return encodeBoolean(input as boolean);
+        case 'undefined':
+          return UNDEFINED;
         default:
           if (result === null) {
             return '͢null';
@@ -280,10 +282,16 @@ export default class Arrow {
     } else if (typeof result === 'string') {
       return result;
     }
+    if (Array.isArray(input) || input?.constructor === Object) {
+      return `͢${this.encodeJSON(input)}`;
+    }
     return null;
   }
 
   decode(str: string): unknown {
+    if (str.startsWith('͢[') || str.startsWith('͢{')) {
+      return this.decodeJSON(str.substring(1));
+    }
     return this.reviver(null, str);
   }
 
