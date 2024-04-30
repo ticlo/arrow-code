@@ -63,4 +63,12 @@ describe('string', () => {
 
     assert.equal(Arrow.encode(2n), '͢n:2', 'encode BigInt');
   });
+
+  it('string', () => {
+    assert.equal(Arrow.decode('a'), 'a', 'decode string');
+    assert.equal(Arrow.decode('͢͢a'), '͢a', 'decode arrow string');
+
+    assert.equal(Arrow.encode('b'), 'b', 'encode string');
+    assert.equal(Arrow.encode('͢b'), '͢͢b', 'encode arrow string');
+  });
 });

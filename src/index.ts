@@ -246,6 +246,10 @@ export default class Arrow {
   }
 
   encode(input: unknown): string {
+    if (typeof input === 'string' && input.charCodeAt(0) === 0x362) {
+      // double arrow encode this string
+      return `͢${input}`;
+    }
     const result = this.replacer(null, input, null);
     switch (typeof result) {
       case "string":
@@ -288,12 +292,16 @@ export default class Arrow {
             return undefined;
         }
       }
-      let firstChar = str.charAt(1);
-      if (firstChar === '[' || firstChar === '{') {
+      let nextChar = str.charAt(1);
+      if (nextChar === '[' || nextChar === '{') {
         return this.decodeJSON(str.substring(1));
       }
-      if ((firstChar >= '0' && firstChar <= '9') || firstChar === '-') {
+      if ((nextChar >= '0' && nextChar <= '9') || nextChar === '-') {
         return Number.parseFloat(str.substring(1));
+      }
+      if (nextChar === '͢') {
+        // double encoded string, remove first arrow
+        return str.substring(1);
       }
       let colonPos = str.indexOf(':');
       if (colonPos > -1) {
