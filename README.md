@@ -1,8 +1,6 @@
 # Arrow Code
 
-Arrow Code use unicode combining character "͢ " in string to store types that normally not allowed in JSON
-
-[unicode character 0x362](https://www.compart.com/en/unicode/U+0362) is used for string escaping
+Arrow Code use unicode [combining character "͢ "](https://www.compart.com/en/unicode/U+0362) in string to store types that normally not allowed in JSON
 
 #### examples
 
@@ -11,22 +9,27 @@ Arrow Code use unicode combining character "͢ " in string to store types that n
 const Arrow = require('arrow-code').default;
 
 // encode as JSON
-Arrow.stringify( [
+Arrow.encodeJSON( [
   NaN,
-  -Infinity,
+  -Infinity, 
+  9007199254740997n,
   new Date(),
-  new Uint8Array([1,2,3,4])
+  new Uint8Array([1,2,3,4]), 
+  undefined
 ], 1);
 // returns:
 [
  "͢NaN",
  "͢-Inf",
- "͢Date:2018-02-07T19:07:18.207Z",
- "͢Bin:wFg{A"
+ "͢n:9007199254740997",  // BigInt
+ "͢Date:2018-02-07T19:07:18.207Z",  // Date
+ "͢Bin:wFg{A",  // Uint8Array
+ "͢"  // undefined
 ]
 ```
 
 ## Advantage
+(Arrow.encodeJSON vs MsgPack and BSON)
 
 Arrow Code allows additional data types to be serialized in JSON, such as binary date (Uint8Array) and Date, while still keeps the verbose nature of JSON.<br>
 The output string is still a 100% valid JSON, and compatible with any JSON editing/parsing tool or library. This makes Arrow Code much easier to debug and trouble shoot than binary formats like BSON and MsgPack
@@ -46,12 +49,28 @@ Benchmark with [sample data](https://github.com/ticlo/arrow-code/blob/master/ben
 |MsgPack|0.2893|0.1818|0.6689|0.1933|
 |BSON|0.1573|0.1879|0.3945|0.5648|
 
-## API
-
+## Constructor
 ```typescript
-Arrow.stringify(inpt:any, space?:number, sortKeys?:boolean = false);
-Arrow.parse(inpt:string);
+new Arrow({
+  // whether to encode Binary ( Uint8Array ), default true, which uses Base93 encoding
+  encodeBinary?: boolean | 'base64',
+
+  // whether to encode Date, default true
+  encodeDate?: boolean,
+
+  // whether to encode BigInt, default true
+  encodeBigInt?: boolean,
+})
 ```
+
+## API
+| API                                                                             | comments                                    |
+|:--------------------------------------------------------------------------------|:--------------------------------------------|
+| **encodeJSON**( **inpt**: unknown, **space**?: number, **sortKeys** = false)    | encode as JSON, can be used as static api   |
+| **decodeJSON**( **inpt**: string)                                               | decode JSON, can be used as static api      |
+| **encode**( **inpt**: unknown)                                                  | encode to String, can be used as static api |
+| **decode**( **inpt**: string)                                                   | decode String, can be used as static api    |
+| **register**( **key**: string, **type**: Constructor, **encoder**, **decoder**) | register a custom type                      |
 
 ## Custom Types
 
@@ -73,7 +92,7 @@ arrow.register(
   (str) => new MyClass(str) // custom decoder
 );
 
-myJson.stringify(new MyClass("hello"));
+myJson.encodeJSON(new MyClass("hello"));
 // "͢My:hello"
 ```
 
@@ -89,6 +108,6 @@ const Arrow = require('arrow-code').default;
 // use Base64 instead of Base93
 const arrow = new Arrow({binaryFormat: 'base64'});
 
-arrow.stringify({binary: new Uint8Array([1,2,3,4])});
+arrow.encodeJSON({binary: new Uint8Array([1,2,3,4])});
 // {"binary":"͢B64:AQIDBA=="}
 ```

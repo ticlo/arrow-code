@@ -41,7 +41,7 @@ export default class Arrow {
     if (options?.encodeDate !== false) {
       this.registerRaw('Date', Date, encodeDate, decodeDate);
     }
-    if (options?.encodeBigInt === true) {
+    if (options?.encodeBigInt !== false) {
       this.registerRaw('n', BigInt, encodeBigInt, decodeBigInt);
     }
   }
