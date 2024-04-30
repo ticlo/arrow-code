@@ -1,10 +1,10 @@
 {
   "compilerOptions": {
-    "target": "es2017",
+    "target": "es2020",
     "module": "none",
     "moduleResolution": "node",
     "lib": [
-      "es2017"
+      "es2020"
     ],
     "alwaysStrict": true,
     "noImplicitAny": true,

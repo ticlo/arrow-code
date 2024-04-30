@@ -28,23 +28,10 @@ export function decodeBase64(str: string): Uint8Array {
 }
 
 
-export function encodeNumner(self: number): string {
-  return '͢Number:' + self.toString();
-}
-
-export function decodeNumber(str: string): number {
-  return Number.parseFloat(str.substring(8));
-}
-
 export function encodeBigInt(self: BigInt): string {
-  return '͢BigInt:' + self.toString();
+  return '͢n:' + self.toString();
 }
 
 export function decodeBigInt(str: string): BigInt {
-  return BigInt(str.substring(8));
+  return BigInt(str.substring(3));
 }
-
-export function encodeBoolean(self: boolean): string {
-  return '͢' + self.toString();
-}
-

@@ -1,12 +1,9 @@
 import {
-  decodeBase64,
-  decodeBigInt,
-  decodeDate, decodeNumber,
+  decodeBase64, decodeBigInt,
+  decodeDate,
   decodeUint8Array,
-  encodeBase64,
-  encodeBigInt, encodeBoolean,
+  encodeBase64, encodeBigInt,
   encodeDate,
-  encodeNumner,
   encodeUint8Array
 } from "./codec";
 
@@ -22,17 +19,14 @@ function hasToArrow(obj: unknown): obj is ArrowObject {
 }
 
 interface Options {
-  encodeBinary?: boolean | 'base64';
+  encodeBinary?: boolean | 'base64'; // default true
   encodeDate?: boolean; // default true
-  encodeBigInt?: boolean; // default true
-  encodePrimitive?: boolean; // default false
+  encodeBigInt?: boolean; // default false
 }
 
 export default class Arrow {
   private _encodeTable: Map<any, (self: object) => string> = new Map();
   private _decodeTable: { [key: string]: (str: string) => object } = {};
-
-  encodePrimitive = false;
 
   constructor(options?: Options) {
     if (options?.encodeBinary === 'base64') {
@@ -47,13 +41,8 @@ export default class Arrow {
     if (options?.encodeDate !== false) {
       this.registerRaw('Date', Date, encodeDate, decodeDate);
     }
-    if (options?.encodeBigInt !== false) {
-      this.registerRaw('BigInt', BigInt, encodeBigInt, decodeBigInt);
-    }
-
-    if (options?.encodePrimitive) {
-      this.encodePrimitive = true;
-      this.registerRaw('Number', Number, null, decodeNumber);
+    if (options?.encodeBigInt === true) {
+      this.registerRaw('n', BigInt, encodeBigInt, decodeBigInt);
     }
   }
 
@@ -79,7 +68,7 @@ export default class Arrow {
 
   reviver(key: string, value: unknown): unknown {
     if (typeof value === 'string' && value.charCodeAt(0) === 0x362) {
-      if (value.length < 7) {
+      if (value.length < 6) {
         switch (value) {
           case '͢NaN':
             return NaN;
@@ -87,12 +76,6 @@ export default class Arrow {
             return Infinity;
           case '͢-Inf':
             return -Infinity;
-          case '͢true':
-            return true;
-          case '͢false':
-            return false;
-          case '͢null':
-            return null;
         }
       }
       let colonPos = value.indexOf(':');
@@ -264,23 +247,20 @@ export default class Arrow {
 
   encode(input: unknown): string {
     const result = this.replacer(null, input, null);
-    if (this.encodePrimitive) {
-      switch (typeof result) {
-        case "string":
-          return result;
-        case "number":
-          return encodeNumner(input as number);
-        case "boolean":
-          return encodeBoolean(input as boolean);
-        case 'undefined':
-          return UNDEFINED;
-        default:
-          if (result === null) {
-            return '͢null';
-          }
-      }
-    } else if (typeof result === 'string') {
-      return result;
+    switch (typeof result) {
+      case "string":
+        return result;
+      case "number":
+        return `͢${input}`;
+      case "boolean":
+        return `͢${input}`;
+      case 'undefined':
+        return UNDEFINED;
+      case "bigint":
+        return encodeBigInt(input as BigInt);
+    }
+    if (result === null) {
+      return '͢null';
     }
     if (Array.isArray(input) || input?.constructor === Object) {
       return `͢${this.encodeJSON(input)}`;
@@ -289,10 +269,43 @@ export default class Arrow {
   }
 
   decode(str: string): unknown {
-    if (str.startsWith('͢[') || str.startsWith('͢{')) {
-      return this.decodeJSON(str.substring(1));
+    if (typeof str === 'string' && str.charCodeAt(0) === 0x362) {
+      if (str.length < 7) {
+        switch (str) {
+          case '͢NaN':
+            return NaN;
+          case '͢Inf':
+            return Infinity;
+          case '͢-Inf':
+            return -Infinity;
+          case '͢true':
+            return true;
+          case '͢false':
+            return false;
+          case '͢null':
+            return null;
+          case '͢':
+            return undefined;
+        }
+      }
+      let firstChar = str.charAt(1);
+      if (firstChar === '[' || firstChar === '{') {
+        return this.decodeJSON(str.substring(1));
+      }
+      if ((firstChar >= '0' && firstChar <= '9') || firstChar === '-') {
+        return Number.parseFloat(str.substring(1));
+      }
+      let colonPos = str.indexOf(':');
+      if (colonPos > -1) {
+        let key = str.substring(1, colonPos);
+        let decoder = this._decodeTable[key];
+        if (decoder) {
+          return decoder(str);
+        }
+      }
+      return undefined;
     }
-    return this.reviver(null, str);
+    return str;
   }
 
   encodeJSON(input: unknown, space?: number, sortKeys: boolean = false): string {
