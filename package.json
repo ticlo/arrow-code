@@ -1,10 +1,16 @@
 {
   "name": "arrow-code",
-  "version": "0.3.0",
+  "version": "0.3.2",
   "description": "Arrow Code",
   "main": "lib/index",
   "module": "es/index",
-  "types": "lib/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": { "types": "./es/index.d.ts", "default": "./es/index.js" },
+      "require": { "types": "./lib/index.d.ts", "default": "./lib/index.js" }
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/ticlo/arrow-code.git"

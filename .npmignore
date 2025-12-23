@@ -32,7 +32,7 @@ build
 /benchmark
 /examples
 
-/yarn.lock
+/pnpm-lock.yaml
 /.travis.yml
 /.babelrc
 /tslint.json
