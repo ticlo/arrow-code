@@ -1,4 +1,4 @@
-import Base93 from './base93';
+import Base93 from './base93.js';
 import * as Base64 from 'base64-js';
 
 export function encodeDate(self: Date): string {

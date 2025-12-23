@@ -1,6 +1,6 @@
 {
   "name": "arrow-code",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "Arrow Code",
   "main": "lib/index",
   "module": "es/index",
@@ -37,7 +37,7 @@
   },
   "scripts": {
     "test": "cross-env NODE_ENV=TEST mocha -r ts-node/register test/**/*.ts",
-    "build-es": "tsc --module es2020 --outDir ./es",
+    "build-es": "tsc --module nodenext --moduleResolution nodenext --outDir ./es",
     "build-lib": "tsc --outDir ./lib"
   }
 }

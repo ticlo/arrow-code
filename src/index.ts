@@ -5,7 +5,7 @@ import {
   encodeBase64, encodeBigInt,
   encodeDate,
   encodeUint8Array
-} from "./codec";
+} from "./codec.js";
 
 const UNDEFINED_JSON = '"͢"';
 const UNDEFINED = '͢';
